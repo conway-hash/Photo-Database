@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>My site</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <div id="left">
+
+    <div id="actions">
+      <div class="action" id="add-folder">
+        <i class="fa fa-folder-o"></i>
+        <div class="info">Add folder</div>
+      </div>
+      <div class="action" id="">
+        <i class="fa fa-gear"></i>
+        <div class="info">Info</div>
+      </div>
+    </div>  
+
+    <div id="sidebar">
+      <div class="box">
+        <div class="head"><p>Recently Opened</p><hr class="box-hr"></div>
+        <div class="content">
+          <ul>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="box">
+        <div class="head"><p>Recently Uploaded</p><hr class="box-hr"></div>
+        <div class="content">
+          <ul>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="box">
+        <div class="head"><p>Recently Updated</p><hr class="box-hr"></div>
+        <div class="content">
+          <ul>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="box">
+        <div class="head"><p>Trash Queue</p><hr class="box-hr"></div>
+        <div class="content">
+          <ul>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+            <li><a href="#">Lorem ipsum dolor sit.</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="hr">
+    </div>
+
+  </div>
+
+  <div id="right">
+
+    <div id="side-container">
+      <div id="search-container">
+        <i class="fa fa-search"></i>
+        <input type="text" id="search-bar" placeholder="Search...">
+      </div>
+
+      <div id="filter-container">
+        <i class="fa fa-navicon" id="burger"></i>
+        <div id="filter-selected-container">
+          <div id="filter-selected">By date of upload</div>
+          <div id="filter-list" style="height: 0px;">
+            <div class="filter selected" id="f1">By date of upload</div>
+            <div class="filter" id="f2">By date of description</div>
+            <div class="filter" id="f3">By name</div>   
+            <div class="filter" id="f4">By size</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="main-container">
+      <div id="grid">
+        <div class="folder">
+          <i class="fa fa-folder-open-o"></i>
+          <p class="name">Chata Petras</p>
+          <p class="date">19.8.2022</p>
+          <p class="size">5GB</p>
+        </div>
+        <div class="folder">
+          <i class="fa fa-folder-open-o"></i>
+          <p class="name">Chata Petras</p>
+          <p class="date">19.8.2022</p>
+          <p class="size">5GB</p>
+        </div>
+        <div class="folder">
+          <i class="fa fa-folder-open-o"></i>
+          <p class="name">Chata Petras</p>
+          <p class="date">19.8.2022</p>
+          <p class="size">5GB</p>
+        </div>
+      </div>
+      <div id="bottom">
+        <div class="page active"><a>1</a></div>
+        <div class="page"><a>2</a></div>
+        <div class="page"><a>3</a></div>
+        <div class="page"><a>4</a></div>
+        <div class="page"><a>5</a></div>
+      </div>
+    </div>
+
+  </div>
+  
+  <script src="index.js"></script>
+</body>
+
+</html>
