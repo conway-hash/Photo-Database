@@ -10,130 +10,62 @@
 </head>
 
 <body>
-  <div id="left">
+  <div id="top">
+
+    <div id="search-container">
+      <i class="fa fa-search"></i>
+      <input type="text" id="search-bar" placeholder="Search...">
+    </div>
+
+    <div id="filter-container">
+      <i class="fa fa-navicon" id="burger"></i>
+      <div id="filter-bar">
+        <div id="filter-selected">By date</div>
+        <div id="filter-list" style="height: 0px;">
+          <div class="filter selected" id="f1">By date</div>
+          <div class="filter" id="f2">By name</div>   
+          <div class="filter" id="f3">By size</div>
+        </div>
+      </div>
+    </div>
 
     <div id="actions">
       <div class="action" id="add-folder">
         <i class="fa fa-folder-o"></i>
         <div class="info">Add folder</div>
       </div>
-      <div class="action" id="">
+      <div class="action" id="settings">
         <i class="fa fa-gear"></i>
-        <div class="info">Info</div>
+        <div class="info">Settings</div>
       </div>
     </div>  
 
-    <div id="sidebar">
-      <div class="box">
-        <div class="head"><p>Recently Opened</p><hr class="box-hr"></div>
-        <div class="content">
-          <ul>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="box">
-        <div class="head"><p>Recently Uploaded</p><hr class="box-hr"></div>
-        <div class="content">
-          <ul>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="box">
-        <div class="head"><p>Recently Updated</p><hr class="box-hr"></div>
-        <div class="content">
-          <ul>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="box">
-        <div class="head"><p>Trash Queue</p><hr class="box-hr"></div>
-        <div class="content">
-          <ul>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-            <li><a href="#">Lorem ipsum dolor sit.</a></li>
-          </ul>
-        </div>
-      </div>
-      <hr class="hr">
-    </div>
-
   </div>
 
-  <div id="right">
-
-    <div id="side-container">
-      <div id="search-container">
-        <i class="fa fa-search"></i>
-        <input type="text" id="search-bar" placeholder="Search...">
-      </div>
-
-      <div id="filter-container">
-        <i class="fa fa-navicon" id="burger"></i>
-        <div id="filter-selected-container">
-          <div id="filter-selected">By date of upload</div>
-          <div id="filter-list" style="height: 0px;">
-            <div class="filter selected" id="f1">By date of upload</div>
-            <div class="filter" id="f2">By date of description</div>
-            <div class="filter" id="f3">By name</div>   
-            <div class="filter" id="f4">By size</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
+  <div id="bottom">
 
     <div id="main-container">
+
       <div id="grid">
 
         <div class="folder">
-          <div class="folder-box folder-main">
+
+          <div class="folder-main">
 
             <div class="folder-main-cover">
               <div class="folder-main-cover-shadow">
-                <i class="fa fa-folder-open-o"  style="font-size: 50px;"></i>
+                <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
               </div>
-          </div>
+            </div>
 
             <div class="folder-main-content">
               <h4>Summer Vacation</h4>
               <p>5GB 19.8.2022</p>
             </div>
+
           </div>
-          <div class="folder-box folder-content">
+
+          <div class="folder-content">
             <div class="folder-content-container">
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1599394022918-6c2776530abb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1458&q=80') no-repeat center center/cover;"></div>
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;"></div>
@@ -151,19 +83,8 @@
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1599423300746-b62533397364?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;"></div>
             </div>
           </div>
-          <div class="folder-box folder-info">
-            <div class="folder-info-location">
-              <div class="info-content">
-                <label>Location</label>
-                <p class="center">Demanovska Dolina</p>
-              </div>
-            </div>
-            <div class="folder-info-date">
-              <div class="info-content">
-                <label>Date</label>
-                <p class="center" >15.8.2022</p>
-              </div>
-            </div>
+
+          <div class="folder-info">
             <div class="folder-info-people">
               <div class="info-content">
                 <label>People</label>
@@ -177,23 +98,28 @@
                 </p>
               </div>
             </div>
-          </div>      
+          </div>
+
         </div>
+
         <div class="folder">
-          <div class="folder-box folder-main">
+
+          <div class="folder-main">
 
             <div class="folder-main-cover">
               <div class="folder-main-cover-shadow">
-                <i class="fa fa-folder-open-o"  style="font-size: 50px;"></i>
+                <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
               </div>
-          </div>
+            </div>
 
             <div class="folder-main-content">
               <h4>Summer Vacation</h4>
               <p>5GB 19.8.2022</p>
             </div>
+
           </div>
-          <div class="folder-box folder-content">
+
+          <div class="folder-content">
             <div class="folder-content-container">
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1599394022918-6c2776530abb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1458&q=80') no-repeat center center/cover;"></div>
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;"></div>
@@ -211,19 +137,8 @@
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1599423300746-b62533397364?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;"></div>
             </div>
           </div>
-          <div class="folder-box folder-info">
-            <div class="folder-info-location">
-              <div class="info-content">
-                <label>Location</label>
-                <p class="center">Demanovska Dolina</p>
-              </div>
-            </div>
-            <div class="folder-info-date">
-              <div class="info-content">
-                <label>Date</label>
-                <p class="center" >15.8.2022</p>
-              </div>
-            </div>
+
+          <div class="folder-info">
             <div class="folder-info-people">
               <div class="info-content">
                 <label>People</label>
@@ -233,26 +148,32 @@
             <div class="folder-info-description">
               <div class="info-content">
                 <label>Description</label>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et ipsam doloribus voluptatum enim quidem, quod quis sed molestiae, repudiandae consectetur totam officiis quo impedit. Placeat consectetur necessitatibus architecto sequi enim!</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et ipsam doloribus voluptatum enim quidem, quod quis sed molestiae, repudiandae consectetur totam officiis quo impedit. Placeat consectetur necessitatibus architecto sequi enim!
+                </p>
               </div>
             </div>
-          </div>      
+          </div>
+
         </div>
+
         <div class="folder">
-          <div class="folder-box folder-main">
+
+          <div class="folder-main">
 
             <div class="folder-main-cover">
               <div class="folder-main-cover-shadow">
-                <i class="fa fa-folder-open-o"  style="font-size: 50px;"></i>
+                <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
               </div>
-          </div>
+            </div>
 
             <div class="folder-main-content">
               <h4>Summer Vacation</h4>
               <p>5GB 19.8.2022</p>
             </div>
+
           </div>
-          <div class="folder-box folder-content">
+
+          <div class="folder-content">
             <div class="folder-content-container">
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1599394022918-6c2776530abb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1458&q=80') no-repeat center center/cover;"></div>
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;"></div>
@@ -270,19 +191,8 @@
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1599423300746-b62533397364?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;"></div>
             </div>
           </div>
-          <div class="folder-box folder-info">
-            <div class="folder-info-location">
-              <div class="info-content">
-                <label>Location</label>
-                <p class="center">Demanovska Dolina</p>
-              </div>
-            </div>
-            <div class="folder-info-date">
-              <div class="info-content">
-                <label>Date</label>
-                <p class="center" >15.8.2022</p>
-              </div>
-            </div>
+
+          <div class="folder-info">
             <div class="folder-info-people">
               <div class="info-content">
                 <label>People</label>
@@ -292,26 +202,32 @@
             <div class="folder-info-description">
               <div class="info-content">
                 <label>Description</label>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et ipsam doloribus voluptatum enim quidem, quod quis sed molestiae, repudiandae consectetur totam officiis quo impedit. Placeat consectetur necessitatibus architecto sequi enim!</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et ipsam doloribus voluptatum enim quidem, quod quis sed molestiae, repudiandae consectetur totam officiis quo impedit. Placeat consectetur necessitatibus architecto sequi enim!
+                </p>
               </div>
             </div>
-          </div>      
+          </div>
+
         </div>
+
         <div class="folder">
-          <div class="folder-box folder-main">
+
+          <div class="folder-main">
 
             <div class="folder-main-cover">
               <div class="folder-main-cover-shadow">
-                <i class="fa fa-folder-open-o"  style="font-size: 50px;"></i>
+                <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
               </div>
-          </div>
+            </div>
 
             <div class="folder-main-content">
               <h4>Summer Vacation</h4>
               <p>5GB 19.8.2022</p>
             </div>
+
           </div>
-          <div class="folder-box folder-content">
+
+          <div class="folder-content">
             <div class="folder-content-container">
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1599394022918-6c2776530abb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1458&q=80') no-repeat center center/cover;"></div>
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;"></div>
@@ -329,19 +245,8 @@
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1599423300746-b62533397364?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;"></div>
             </div>
           </div>
-          <div class="folder-box folder-info">
-            <div class="folder-info-location">
-              <div class="info-content">
-                <label>Location</label>
-                <p class="center">Demanovska Dolina</p>
-              </div>
-            </div>
-            <div class="folder-info-date">
-              <div class="info-content">
-                <label>Date</label>
-                <p class="center" >15.8.2022</p>
-              </div>
-            </div>
+
+          <div class="folder-info">
             <div class="folder-info-people">
               <div class="info-content">
                 <label>People</label>
@@ -351,26 +256,32 @@
             <div class="folder-info-description">
               <div class="info-content">
                 <label>Description</label>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et ipsam doloribus voluptatum enim quidem, quod quis sed molestiae, repudiandae consectetur totam officiis quo impedit. Placeat consectetur necessitatibus architecto sequi enim!</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et ipsam doloribus voluptatum enim quidem, quod quis sed molestiae, repudiandae consectetur totam officiis quo impedit. Placeat consectetur necessitatibus architecto sequi enim!
+                </p>
               </div>
             </div>
-          </div>      
+          </div>
+
         </div>
+
         <div class="folder">
-          <div class="folder-box folder-main">
+
+          <div class="folder-main">
 
             <div class="folder-main-cover">
               <div class="folder-main-cover-shadow">
-                <i class="fa fa-folder-open-o"  style="font-size: 50px;"></i>
+                <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
               </div>
-          </div>
+            </div>
 
             <div class="folder-main-content">
               <h4>Summer Vacation</h4>
               <p>5GB 19.8.2022</p>
             </div>
+
           </div>
-          <div class="folder-box folder-content">
+
+          <div class="folder-content">
             <div class="folder-content-container">
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1599394022918-6c2776530abb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1458&q=80') no-repeat center center/cover;"></div>
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;"></div>
@@ -388,19 +299,8 @@
               <div class="folder-content-card" style="background: url('https://images.unsplash.com/photo-1599423300746-b62533397364?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;"></div>
             </div>
           </div>
-          <div class="folder-box folder-info">
-            <div class="folder-info-location">
-              <div class="info-content">
-                <label>Location</label>
-                <p class="center">Demanovska Dolina</p>
-              </div>
-            </div>
-            <div class="folder-info-date">
-              <div class="info-content">
-                <label>Date</label>
-                <p class="center" >15.8.2022</p>
-              </div>
-            </div>
+
+          <div class="folder-info">
             <div class="folder-info-people">
               <div class="info-content">
                 <label>People</label>
@@ -410,14 +310,17 @@
             <div class="folder-info-description">
               <div class="info-content">
                 <label>Description</label>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et ipsam doloribus voluptatum enim quidem, quod quis sed molestiae, repudiandae consectetur totam officiis quo impedit. Placeat consectetur necessitatibus architecto sequi enim!</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et ipsam doloribus voluptatum enim quidem, quod quis sed molestiae, repudiandae consectetur totam officiis quo impedit. Placeat consectetur necessitatibus architecto sequi enim!
+                </p>
               </div>
             </div>
-          </div>      
+          </div>
+
         </div>
     
         </div>
       </div>
+
     </div>
 
   </div>
