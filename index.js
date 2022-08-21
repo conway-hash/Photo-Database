@@ -91,7 +91,8 @@ addFolderAction.addEventListener('click', () => {
     const formRightGrid = document.createElement('div')
     formRightGrid.id = 'form-right-grid'
 
-    const formRightImport = document.createElement('div')
+    const formRightImport = document.createElement('form')
+    formRightImport.setAttribute("enctype","multipart/form-data")
     formRightImport.id = 'form-right-import'
     const importField = document.createElement('input')
     importField.type = 'file'
@@ -99,6 +100,8 @@ addFolderAction.addEventListener('click', () => {
 
     /* form-right display images feature  */
     importField.addEventListener('change', (e) =>{
+        const reset_files = document.querySelectorAll('.form-right-grid-file')
+        reset_files.forEach(file => {file.remove()})
         if(window.File && window.FileReader && window.FileList && window.Blob) {
             const files = e.target.files
             for (let i = 0; i < files.length; i++) {
@@ -108,17 +111,41 @@ addFolderAction.addEventListener('click', () => {
                     const file = event.target
                     const formRightGridFile = document.createElement('div')
                     formRightGridFile.classList.add('form-right-grid-file')
-                    formRightGridFile.innerHTML = `<img class="thumbnail" src="${file.result}" title="${file.name}">`
+
+                    /*Show or Delete on click*/
+                    const file_overlay = document.createElement('div')
+                    const trash_icon = document.createElement('i')
+                    const eye_icon = document.createElement('i')
+                    trash_icon.classList.add('fa','fa-trash-o')
+                    eye_icon.classList.add('fa','fa-eye')
+
+                    trash_icon.addEventListener('click', () => {
+                        console.log('delete item from list')
+                    })
+
+                    eye_icon.addEventListener('click', () => {
+                        console.log('show image')
+                    })
+
+                    formRightGridFile.addEventListener('mouseenter', () => {
+                        file_overlay.classList.add('file-overlay')
+                        file_overlay.append(eye_icon,trash_icon)
+                        formRightGridFile.appendChild(file_overlay)
+                    })
+
+                    formRightGridFile.addEventListener('mouseleave', () => {
+                        file_overlay.remove()
+                    })
+                    formRightGridFile.innerHTML = `<img class="thumbnail" src="${file.result}"/>`
                     formRightGrid.appendChild(formRightGridFile)
                 })
                 reader.readAsDataURL(files[i])
             }
-
         } else {
             alert('Your browser does not spport File API')
         }
+        
     })
-
     formRightImport.append(importField)
     formRight.append(formRightGrid,formRightImport)
 
