@@ -27,6 +27,7 @@ body {
  
 ::-webkit-scrollbar-track {
     background-color: #1E1E1E;
+    border-radius: 0px 300px 300px 0px;
 }
  
 ::-webkit-scrollbar-thumb {
@@ -241,7 +242,7 @@ body {
 
 /* BOTTOM */
 #bottom {
-    height: 93%;
+    margin-bottom: 10px;
     width: 100%;
 
     display: flex;
@@ -250,6 +251,7 @@ body {
     
     padding: 25px;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 /* main-container */

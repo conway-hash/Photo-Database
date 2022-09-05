@@ -1,3 +1,5 @@
+getData();
+
 const burger = document.querySelector('#burger')
 const filterList = document.querySelector('#filter-list')
 const filters = document.querySelectorAll('.filter')
@@ -24,8 +26,6 @@ filters.forEach(filter => {
         filterList.parentElement.classList.remove('expanded')
     })
 })
-
-const folders = document.querySelectorAll('.folder')
 
 const addFolderAction = document.querySelector('#add-folder')
 
@@ -59,7 +59,11 @@ addFolderAction.addEventListener('click', () => {
         const data_name = formLeftName.value
         const data_people = formLeftPeople.value
         const data_description = formLeftDescription.value
-        const data = { data_name, data_people, data_description,}
+        const data = { 
+            data_name, 
+            data_people, 
+            data_description
+        }
         const options = {
             method: 'POST',
             headers: {
@@ -70,6 +74,7 @@ addFolderAction.addEventListener('click', () => {
         fetch('/api',options);
         overlayShadow.innerHTML = ''
         overlayShadow.remove()
+        getData();
     } )
     /* OVERLAY LOOK */
     /* form left */
@@ -162,3 +167,60 @@ addFolderAction.addEventListener('click', () => {
     overlayShadow.append(overlay)
     document.body.append(overlayShadow)
 })    
+
+async function getData() {
+    const response = await fetch('/api')
+    const data = await response.json();
+    
+    const grid = document.querySelector('#grid')
+    grid.innerHTML = ''
+    for (item of data) {
+        const d = new Date(item.timestamp)
+        const folder = document.createElement('div')
+        folder.innerHTML = `
+            <div class="folder-main">
+
+                <div class="folder-main-cover">
+                    <div class="folder-main-cover-shadow">
+                        <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
+                    </div>
+                </div>
+
+                <div class="folder-main-content">
+                    <h4>${item.data_name}</h4>
+                    <p>
+                        ${d.toLocaleDateString()}
+                    </p>
+                </div>
+
+                </div>
+
+                <div class="folder-content">
+                    <div class="folder-content-container">
+                        
+                    </div>
+                </div>
+
+                <div class="folder-info">
+                    <div class="folder-info-people">
+                        <div class="info-content">
+                            <label>People</label>
+                            <p>${item.data_people}</p>
+                        </div>
+                    </div>
+                    <div class="folder-info-description">
+                        <div class="info-content">
+                            <label>Description</label>
+                            <p>${item.data_description}</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        `
+        folder.id = item._id
+        folder.classList.add('folder')
+        grid.append(folder)
+    }
+    console.log(data)
+}

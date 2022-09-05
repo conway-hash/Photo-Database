@@ -9,6 +9,21 @@ app.use(express.json({limit: '1mb'}));
 const database = new Datastore('database.db');
 database.loadDatabase();
 
+/*
+database.remove({}, { multi: true }, function (err, numRemoved) {
+});
+*/
+
+app.get('/api', (request, response) => {
+    database.find({}, (err, data) => {
+        if (err) {
+            response.end();
+            return; 
+        }
+        response.json(data);
+    });
+});
+
 app.post('/api', (request, response) => {
     const data = request.body;
     const timestamp = Date.now();
