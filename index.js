@@ -68,14 +68,6 @@ addFolderAction.addEventListener('click', () => {
     formLeftName.type = 'text'
     formLeftName.placeholder = 'Folder Title...'
 
-    const formLeftDate = document.createElement('input')
-    formLeftDate.classList.add('form-left-date')
-    formLeftDate.type = 'date'
-
-    const formLeftLocation = document.createElement('input')
-    formLeftLocation.classList.add('form-left-location')
-    formLeftLocation.placeholder = 'Location...'
-
     const formLeftPeople= document.createElement('textarea')
     formLeftPeople.classList.add('form-left-people')
     formLeftPeople.placeholder = 'John Doe, Jane Doe...'
@@ -83,7 +75,7 @@ addFolderAction.addEventListener('click', () => {
     formLeftDescription.classList.add('form-left-description')
     formLeftDescription.placeholder = 'Description...'
 
-    formLeft.append(formLeftName,formLeftDate,formLeftLocation,formLeftPeople,formLeftDescription)
+    formLeft.append(formLeftName,formLeftPeople,formLeftDescription)
     /* form-right */
     const formRight = document.createElement('div')
     formRight.id = 'form-right'
