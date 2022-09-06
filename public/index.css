@@ -9,18 +9,17 @@ body {
     height: 100vh;
     min-width: 1920px;
     min-height: 1030px;
-
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 40px;
-
     font-family: 'Muli', sans-serif;
-
     background: #121212;
+    box-sizing: border-box;
     overflow: hidden;
 }
 
+/*SCROLLBAR*/
 ::-webkit-scrollbar {
     width: 16px;
 }
@@ -36,28 +35,23 @@ body {
 }
 
 /* TOP */
-
 #top {
     height: 50px;
     width: 100%;
-
     display: flex;
     flex-direction: row;
     gap: 25px;
-
     padding: 25px;
     box-sizing: border-box;
 }
 
-/* search-container */
+/* 1.search-container */
 #search-container {
     height: 50px;
     width: 300px;
-
     display: flex;
     flex-direction: row;
     align-items: center;
-    
     background: #1E1E1E;
     border-radius: 15px;
 }
@@ -65,11 +59,9 @@ body {
 #search-container i {
     height: 50px;
     width: 50px;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     color: rgba(255, 255, 255, 0.87);
     cursor: pointer;
     font-size: 25px;
@@ -77,10 +69,8 @@ body {
 
 #search-bar {
     all: unset;
-
     height: 50px;
     width: 250px;
-
     font-size: 20px;
     caret-color: rgba(255, 255, 255, 0.60);
     color: rgba(255, 255, 255, 0.60);
@@ -88,15 +78,13 @@ body {
     border-radius: 0px 15px 15px 0px;
 }
 
-/* filter-container */
+/* 2.filter-container */
 #filter-container {
     height: 50px;
     width: 300px;
-
     display: flex;
     flex-direction: row;
     align-items: center;
-    
     background: #1E1E1E;
     border-radius: 15px;
 }
@@ -104,25 +92,20 @@ body {
 #filter-container i {
     height: 50px;
     width: 50px;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     color: rgba(255, 255, 255, 0.87);
     cursor: pointer;
     font-size: 25px;
 }
 
 #filter-bar {
-    height: 100%;
-    width: 100%;
-
+    height: 50px;
+    width: 250px;
     position: relative;
-
     display: flex;
     flex-direction: column;
-
     font-size: 20px;
 }
 
@@ -132,23 +115,19 @@ body {
 }
 
 #filter-selected {
-    height: 100%;
-    width: 100%;
-
+    height: 50px;
+    width: 250px;
     padding-left: 5px;
-
     color: rgba(255, 255, 255, 0.60);
     display: flex;
     align-items: center;
 }
 
 #filter-list {
-    width: 100%;
+    width: 250px;
     transform: translateY(50px);
-
     display: flex;
     flex-direction: column;
-
     color: rgba(255, 255, 255, 0.60);
     position: absolute;
     z-index: 1;
@@ -160,16 +139,12 @@ body {
 }
 
 .filter {
-    width: 100%;
+    width: 250px;
     height: 50px;
-
     padding-left: 5px;
-
     box-sizing: border-box;
-
     display: flex;
     align-items: center;
-
     background: #2D2D2D;
     cursor: pointer;
 }
@@ -178,10 +153,9 @@ body {
     background: rgb(60, 60, 60);
 }
 
-/*actions */
+/* 3.actions */
 #actions {
-    height: 100%;
-
+    height: 50px;
     display: flex;
     flex-direction: row;
     gap: 25px;
@@ -190,25 +164,19 @@ body {
 .action {
     height: 50px;
     width: 100px;
-
     position: relative;
-
     display: flex;
-
     background: #1E1E1E;
     border-radius: 15px;
-
     cursor: pointer;
 }
 
 .action i {
     height: 100%;
     width: 100%;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     color: rgba(255, 255, 255, 0.87);
     font-size: 25px;
 }
@@ -220,35 +188,27 @@ body {
 .info {
     height: 50px;
     width: 100px;
-
     position: absolute;
-
     display: flex;
     align-items: flex-end;
     justify-content: center;
     text-align: center;
-
     padding-bottom: 10px;
     box-sizing: border-box;
-
     background: #222222;
     color: rgba(255, 255, 255, 0.60);
     font-size: 15px;
     border-radius: 15px;
     z-index: -1;
-    
     transition: all 0.5s ease;
 }
 
 /* BOTTOM */
 #bottom {
-    margin-bottom: 10px;
     width: 100%;
-
     display: flex;
     flex-direction: column;
     gap: 50px;
-    
     padding: 25px;
     box-sizing: border-box;
     overflow: hidden;
@@ -258,7 +218,6 @@ body {
 #main-container {
     height: 100%;
     width: 100%; 
-
     background: #1E1E1E;
     border-radius: 15px;
     overflow: hidden;
@@ -268,14 +227,11 @@ body {
 #grid {
     height: 100%;
     width: 100%;
-
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto;
-
     gap: 10px;
     padding: 10px;
-
     overflow-y: scroll;
     overflow-x: hidden;
     box-sizing: border-box;
@@ -285,12 +241,10 @@ body {
 .folder {
     height: 300px;
     width: 100%;
-
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-
     color: rgba(255, 255, 255, 0.60);
     background: #222222;
     border-radius: 15px;
@@ -303,41 +257,35 @@ body {
 .folder-main {
     flex: 1.5;
     height: 100%;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    
     padding: 5px;
     background: #2D2D2D;
     box-sizing: border-box;
+    cursor: pointer;
 }
 .folder-main-cover{ 
     width: 100%;
     flex: 7;
-
-    background: url('https://images.unsplash.com/photo-1599394022918-6c2776530abb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1458&q=80') no-repeat center center/cover;
+    background: no-repeat center center/cover;
     border-radius: 15px 0px 0px 15px;
-
     overflow: hidden;
 }
 
 .folder-main-cover-shadow {
     height: 100%;
     width: 100%;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     background: rgba(0, 0, 0, 0.5);
 }
 
 .folder-main-content {
     width: 100%;
     flex: 3;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -361,19 +309,16 @@ body {
 .folder-content {
     flex: 3;
     height: 100%;
-    
     padding: 10px 0px 10px 10px;
     box-sizing: border-box;
 }
 
 .folder-content-container {
     height: 100%;
-
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     gap: 5px;
-
     padding: 5px;
     background: #272727;
     border-radius: 15px;
@@ -390,21 +335,21 @@ body {
     flex: 5;
     height: 100%;
     padding: 5px;
-
     display: grid;
     grid-template-columns: 3fr 4fr;
     grid-template-rows: 1fr;
-
     box-sizing: border-box;
 }
 
-.folder-info-people {
+.folder-info-alias {
     grid-column: 1;
     grid-row: 1;
     padding: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 .folder-info-description {
     grid-column: 2;
@@ -413,6 +358,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .info-content {
@@ -425,6 +372,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
 }
 
 .info-content label {
@@ -438,7 +386,7 @@ body {
 }
 
 /*OVERLAY*/
-.overlay-shadow {
+#overlay-shadow {
     position: absolute;
     z-index: 2;
     display: flex;
@@ -452,7 +400,7 @@ body {
     background: rgba(0, 0, 0, 0.800);
 }
 
-.overlay {
+#overlay {
     height: 90%;
     width: 90%;
     border-radius: 15px;
@@ -465,7 +413,8 @@ body {
     gap: 50px;
 }
 
-.form-left {
+/* 1.form-left */
+#form-left {
     height: 100%;
     width: 30%;
     display: flex;
@@ -473,7 +422,7 @@ body {
     gap: 50px;
 }
 
-.form-left-name {
+#form-left-name {
     all: unset;
     background: #1E1E1E;
     height: 50px;
@@ -486,34 +435,7 @@ body {
     border-radius: 15px;
 }
 
-.form-left-date {
-    all: unset;
-    background: #1E1E1E;
-    height: 50px;
-    width: 100%;
-    font-size: 20px;
-    caret-color: rgba(255, 255, 255, 0.60);
-    color: rgba(255, 255, 255, 0.60);
-    padding:  11px 15px;
-    box-sizing: border-box;
-    border-radius: 15px;
-    color-scheme: dark;
-}
-
-.form-left-location {
-    all: unset;
-    background: #1E1E1E;
-    height: 50px;
-    width: 100%;
-    font-size: 20px;
-    caret-color: rgba(255, 255, 255, 0.60);
-    color: rgba(255, 255, 255, 0.60);
-    padding:  15px 15px;
-    box-sizing: border-box;
-    border-radius: 15px;
-}
-
-.form-left-people {
+#form-left-alias {
     all: unset;
     background: #1E1E1E;
     height: 150px;
@@ -526,7 +448,7 @@ body {
     border-radius: 15px;
 }
 
-.form-left-description {
+#form-left-description {
     all: unset;
     background: #1E1E1E;
     flex: 1;
@@ -540,34 +462,7 @@ body {
     border-radius: 15px;
 }
 
-.dot {
-    color: rgba(255, 255, 255, 0.87);
-    font-size: 25px;
-    background: #121212;
-    cursor: pointer;
-    height: 100px;
-    width: 50px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute; 
-}
-
-.dot:hover {
-    background:#1E1E1E;
-}
-
-.close-dot {
-    top: 0;
-    right: -75px;
-}
-
-.save-dot {
-    top: 125px;
-    right: -75px;
-}
-
+/* 2.form-right */
 #form-right {
     height: 100%;
     width: 70%;
@@ -632,4 +527,38 @@ body {
     flex-direction: row;
     justify-content: center;
     align-items: center;
+}
+
+/* 3.dots */
+.dot {
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 25px;
+    background: #121212;
+    cursor: pointer;
+    height: 100px;
+    width: 50px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute; 
+}
+
+.dot:hover {
+    background:#1E1E1E;
+}
+
+.close-dot {
+    top: 0px;
+    right: -75px;
+}
+
+.save-dot {
+    top: 125px;
+    right: -75px;
+}
+
+.delete-dot {
+    bottom: 0px;
+    right: -75px;
 }
