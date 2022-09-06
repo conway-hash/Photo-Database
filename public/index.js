@@ -63,11 +63,9 @@ addFolderAction.addEventListener('click', () => {
         const data_name = formLeftName.value;
         const data_alias = formLeftAlias.value;
         const data_description = formLeftDescription.value;
-        const data = { 
-            data_name, 
-            data_alias, 
-            data_description
-        };
+        const _id = String(Date.now());
+        const data_modified = _id
+        const data = {data_name, data_alias, data_description, data_modified, _id};
         const options = {
             method: 'POST',
             headers: {
@@ -198,10 +196,30 @@ async function getData() {
         folder_main_content.classList.add('folder-main-content')
         const fmc_h4 = document.createElement('h4')
         fmc_h4.textContent = `${item.data_name}`
-        const fmc_p = document.createElement('p')
-        const d = new Date(item.timestamp)
-        fmc_p.textContent = `${d.toLocaleDateString()}`
-        folder_main_content.append(fmc_h4,fmc_p)
+        const fmc_p_u = document.createElement('p')
+        const fmc_p_m = document.createElement('p')
+        const dt_u = new Date(Number(item._id))
+        const padL = (nr, len = 2, chr = `0`) => `${nr}`.padStart(2, chr);
+        const date_u = `${
+            padL(dt_u.getDate())}/${
+            padL(dt_u.getMonth()+1)}/${
+            dt_u.getFullYear()} ${
+            padL(dt_u.getHours())}:${
+            padL(dt_u.getMinutes())}:${
+            padL(dt_u.getSeconds())
+        }`
+        const dt_m = new Date(Number(item.data_modified))
+        fmc_p_u.innerHTML = `Uploaded: ${date_u}`
+        const date_m = `${
+            padL(dt_m.getDate())}/${
+            padL(dt_m.getMonth()+1)}/${
+            dt_m.getFullYear()} ${
+            padL(dt_m.getHours())}:${
+            padL(dt_m.getMinutes())}:${
+            padL(dt_m.getSeconds())
+        }`
+        fmc_p_m.innerHTML = `Modified: ${date_m}`
+        folder_main_content.append(fmc_h4,fmc_p_m,fmc_p_u)
 
         folder_main.append(folder_main_cover,folder_main_content)
 
@@ -240,12 +258,12 @@ async function getData() {
             });
         
             saveDot.addEventListener('click',() => {
-                /* update */
-                /*
                 const data_name = formLeftName.value;
                 const data_alias = formLeftAlias.value;
                 const data_description = formLeftDescription.value;
-                const data = {data_name, data_alias, data_description};
+                const data_modified = String(Date.now());
+                const _id = folder.id;
+                const data = {data_name, data_alias, data_description, data_modified, _id};
                 const options = {
                     method: 'POST',
                     headers: {
@@ -253,11 +271,10 @@ async function getData() {
                     },
                     body: JSON.stringify(data)
                 };
-                fetch('/api',options);
+                fetch('/update',options);
                 overlayShadow.innerHTML = '';
                 overlayShadow.remove();
                 getData();
-                */
             })
 
             deleteDot.addEventListener('click', () => {
