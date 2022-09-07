@@ -371,18 +371,20 @@ body {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: center;
     overflow: hidden;
 }
 
 .info-content label {
     color: rgba(255, 255, 255, 0.60);
     font-size: 17px;
+    text-align: center;
 }
 
 .info-content p {
     color: rgba(255, 255, 255, 0.38);
     font-size: 13px;
+    text-align: left;
+    word-wrap: break-word;
 }
 
 /*OVERLAY*/
@@ -444,6 +446,7 @@ body {
     caret-color: rgba(255, 255, 255, 0.60);
     color: rgba(255, 255, 255, 0.60);
     padding:  15px 15px;
+    word-wrap: break-word;
     box-sizing: border-box;
     border-radius: 15px;
 }
@@ -487,6 +490,11 @@ body {
 .form-right-grid-file {
     position: relative;
     height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 50px;
     padding: 5px;
     border-radius: 15px;
     background: #222222;
@@ -517,6 +525,16 @@ body {
     cursor: pointer;
     color: rgba(255, 255, 255, 0.87);
     font-size: 50px;
+}
+
+.file-overlay-name {
+    position: absolute;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.87);
+    max-width: 100%;
+    word-wrap: break-word;
+    font-size: 12px;
+    bottom: 5px;
 }
 
 #form-right-import {

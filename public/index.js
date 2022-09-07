@@ -1,5 +1,5 @@
 getData();
-
+/*INITIAL-ADD-FILE---------------------------------------------------------------------------------------------------*/
 /* FILTER BURGER */
 const burger = document.querySelector('#burger')
 const filterList = document.querySelector('#filter-list')
@@ -105,60 +105,92 @@ addFolderAction.addEventListener('click', () => {
     formRightGrid.id = 'form-right-grid';
 
     const formRightImport = document.createElement('form');
-    formRightImport.setAttribute("enctype","multipart/form-data");
     formRightImport.id = 'form-right-import';
     const importField = document.createElement('input');
     importField.type = 'file';
+    importField.id = 'import-field';
     importField.setAttribute("multiple","");
 
-    /* form-right display images feature  */
-    importField.addEventListener('change', (e) =>{
-        const reset_files = document.querySelectorAll('.form-right-grid-file')
-        reset_files.forEach(file => {file.remove()})
-        if(window.File && window.FileReader && window.FileList && window.Blob) {
-            const files = e.target.files
-            for (let i = 0; i < files.length; i++) {
-                if(!files[i].type.match('image')) continue
+    /* add multiple folders, add more folders afterwards, delete */
+    const dt = new DataTransfer();
+    importField.addEventListener('change', () => {
+        for(let i = 0; i < importField.files.length; i++){
+            let form_right_grid_file = document.createElement('div')
+            form_right_grid_file.classList.add('form-right-grid-file')
+
+            const file_overlay = document.createElement('div')
+            const trash_icon = document.createElement('i')
+            trash_icon.classList.add('fa','fa-trash-o')
+            trash_icon.addEventListener('click', () => {
+                let delete_file = trash_icon.parentElement.lastElementChild.innerHTML
+                trash_icon.parentElement.parentElement.remove()
+                for(let i = 0; i < dt.items.length; i++){
+                    if(delete_file === dt.items[i].getAsFile().name){
+                        dt.items.remove(i);
+                        continue;
+                    }
+                }
+                document.getElementById('import-field').files = dt.files;
+            })
+
+            const type = importField.files.item(i).type
+            const eye_icon = document.createElement('i')
+            eye_icon.classList.add('fa','fa-eye')
+            eye_icon.addEventListener('click', () => {
+                console.log(type)
+                console.log('show image')
+            })
+            const file_overlay_name = document.createElement('p')
+            file_overlay_name.classList.add('file-overlay-name')
+            file_overlay_name.innerHTML = `${importField.files.item(i).name}`
+            
+            form_right_grid_file.addEventListener('mouseenter', () => {
+                file_overlay.classList.add('file-overlay')
+                file_overlay.append(eye_icon,trash_icon,file_overlay_name)
+                form_right_grid_file.appendChild(file_overlay)
+            })
+
+            form_right_grid_file.addEventListener('mouseleave', () => {
+                file_overlay.remove()
+            })
+
+            if(window.File && window.FileReader && window.FileList && window.Blob) {
                 const reader = new FileReader()
-                reader.addEventListener('load', function(event) {
-                    const file = event.target
-                    const formRightGridFile = document.createElement('div')
-                    formRightGridFile.classList.add('form-right-grid-file')
-
-                    /*Show or Delete on click*/
-                    const file_overlay = document.createElement('div')
-                    const trash_icon = document.createElement('i')
-                    const eye_icon = document.createElement('i')
-                    trash_icon.classList.add('fa','fa-trash-o')
-                    eye_icon.classList.add('fa','fa-eye')
-
-                    trash_icon.addEventListener('click', () => {
-                        console.log('delete item from list')
-                    })
-
-                    eye_icon.addEventListener('click', () => {
-                        console.log('show image')
-                    })
-
-                    formRightGridFile.addEventListener('mouseenter', () => {
-                        file_overlay.classList.add('file-overlay')
-                        file_overlay.append(eye_icon,trash_icon)
-                        formRightGridFile.appendChild(file_overlay)
-                    })
-
-                    formRightGridFile.addEventListener('mouseleave', () => {
-                        file_overlay.remove()
-                    })
-                    formRightGridFile.innerHTML = `<img class="thumbnail" src="${file.result}"/>`
-                    formRightGrid.appendChild(formRightGridFile)
+                reader.addEventListener('load', (event) => {
+                    if (type.includes('image')){
+                        form_right_grid_file.innerHTML = `<img class="thumbnail" src="${event.target.result}"/>`
+                    } else if (type.includes('video')) {
+                        form_right_grid_file.innerHTML = `<i class="fa fa-file-movie-o"></i>`
+                    } else if (type.includes('audio')) {
+                        form_right_grid_file.innerHTML = `<i class="fa fa-file-audio-o"></i>`
+                    } else {
+                        form_right_grid_file.innerHTML = `<i class="fa fa-file-o"></i>`
+                    }
                 })
-                reader.readAsDataURL(files[i])
+                reader.readAsDataURL(importField.files[i])
+                formRightGrid.appendChild(form_right_grid_file)
+            } else {
+                alert('Your browser does not spport File API')
+                if (type.includes('image')){
+                    form_right_grid_file.innerHTML = `<i class="fa fa-file-photo-o"></i>`
+                } else if (type.includes('video')) {
+                    form_right_grid_file.innerHTML = `<i class="fa fa-file-movie-o"></i>`
+                } else if (type.includes('audio')) {
+                    form_right_grid_file.innerHTML = `<i class="fa fa-file-audio-o"></i>`
+                } else {
+                    form_right_grid_file.innerHTML = `<i class="fa fa-file-o"></i>`
+                }
             }
-        } else {
-            alert('Your browser does not spport File API')
+        };
+
+        for (let file of importField.files) {
+            dt.items.add(file);
         }
-        
-    })
+
+        importField.files = dt.files;
+        console.log(importField.files)
+    });
+    
     formRightImport.append(importField)
     formRight.append(formRightGrid,formRightImport)
 
@@ -167,7 +199,7 @@ addFolderAction.addEventListener('click', () => {
     overlayShadow.append(overlay)
     document.body.append(overlayShadow)
 })    
-
+/*SECONDARY-ADD-FILE--------------------------------------------------------------------------------------------------*/
 /* GET DATA FROM DB ON LOAD AND ON ADDING OR DELETING */
 async function getData() {
     const response = await fetch('/api')
@@ -317,79 +349,113 @@ async function getData() {
             /* 2.form-right */
             const formRight = document.createElement('div');
             formRight.id = 'form-right';
-        
+
             const formRightGrid = document.createElement('div');
             formRightGrid.id = 'form-right-grid';
-        
+
             const formRightImport = document.createElement('form');
-            formRightImport.setAttribute("enctype","multipart/form-data");
             formRightImport.id = 'form-right-import';
             const importField = document.createElement('input');
             importField.type = 'file';
+            importField.id = 'import-field';
             importField.setAttribute("multiple","");
-        
-            /* form-right display images feature  */
-            importField.addEventListener('change', (e) =>{
-                const reset_files = document.querySelectorAll('.form-right-grid-file')
-                reset_files.forEach(file => {file.remove()})
-                if(window.File && window.FileReader && window.FileList && window.Blob) {
-                    const files = e.target.files
-                    for (let i = 0; i < files.length; i++) {
-                        if(!files[i].type.match('image')) continue
+
+            /* add multiple folders, add more folders afterwards, delete */
+            const dt = new DataTransfer();
+            importField.addEventListener('change', () => {
+                for(let i = 0; i < importField.files.length; i++){
+                    let form_right_grid_file = document.createElement('div')
+                    form_right_grid_file.classList.add('form-right-grid-file')
+
+                    const file_overlay = document.createElement('div')
+                    const trash_icon = document.createElement('i')
+                    trash_icon.classList.add('fa','fa-trash-o')
+                    trash_icon.addEventListener('click', () => {
+                        let delete_file = trash_icon.parentElement.lastElementChild.innerHTML
+                        trash_icon.parentElement.parentElement.remove()
+                        for(let i = 0; i < dt.items.length; i++){
+                            if(delete_file === dt.items[i].getAsFile().name){
+                                dt.items.remove(i);
+                                continue;
+                            }
+                        }
+                        document.getElementById('import-field').files = dt.files;
+                    })
+
+                    const type = importField.files.item(i).type
+                    const eye_icon = document.createElement('i')
+                    eye_icon.classList.add('fa','fa-eye')
+                    eye_icon.addEventListener('click', () => {
+                        console.log(type)
+                        console.log('show image')
+                    })
+                    const file_overlay_name = document.createElement('p')
+                    file_overlay_name.classList.add('file-overlay-name')
+                    file_overlay_name.innerHTML = `${importField.files.item(i).name}`
+            
+                    form_right_grid_file.addEventListener('mouseenter', () => {
+                        file_overlay.classList.add('file-overlay')
+                        file_overlay.append(eye_icon,trash_icon,file_overlay_name)
+                        form_right_grid_file.appendChild(file_overlay)
+                    })
+
+                    form_right_grid_file.addEventListener('mouseleave', () => {
+                        file_overlay.remove()
+                    })
+
+                    if(window.File && window.FileReader && window.FileList && window.Blob) {
                         const reader = new FileReader()
-                        reader.addEventListener('load', function(event) {
-                            const file = event.target
-                            const formRightGridFile = document.createElement('div')
-                            formRightGridFile.classList.add('form-right-grid-file')
-        
-                            /*Show or Delete on click*/
-                            const file_overlay = document.createElement('div')
-                            const trash_icon = document.createElement('i')
-                            const eye_icon = document.createElement('i')
-                            trash_icon.classList.add('fa','fa-trash-o')
-                            eye_icon.classList.add('fa','fa-eye')
-        
-                            trash_icon.addEventListener('click', () => {
-                                console.log('delete item from list')
-                            })
-        
-                            eye_icon.addEventListener('click', () => {
-                                console.log('show image')
-                            })
-        
-                            formRightGridFile.addEventListener('mouseenter', () => {
-                                file_overlay.classList.add('file-overlay')
-                                file_overlay.append(eye_icon,trash_icon)
-                                formRightGridFile.appendChild(file_overlay)
-                            })
-        
-                            formRightGridFile.addEventListener('mouseleave', () => {
-                                file_overlay.remove()
-                            })
-                            formRightGridFile.innerHTML = `<img class="thumbnail" src="${file.result}"/>`
-                            formRightGrid.appendChild(formRightGridFile)
+                        reader.addEventListener('load', (event) => {
+                            if (type.includes('image')){
+                                form_right_grid_file.innerHTML = `<img class="thumbnail" src="${event.target.result}"/>`
+                            } else if (type.includes('video')) {
+                                form_right_grid_file.innerHTML = `<i class="fa fa-file-movie-o"></i>`
+                            } else if (type.includes('audio')) {
+                                form_right_grid_file.innerHTML = `<i class="fa fa-file-audio-o"></i>`
+                            } else {
+                                form_right_grid_file.innerHTML = `<i class="fa fa-file-o"></i>`
+                            }
                         })
-                        reader.readAsDataURL(files[i])
+                        reader.readAsDataURL(importField.files[i])
+                        formRightGrid.appendChild(form_right_grid_file)
+                    } else {
+                        alert('Your browser does not spport File API')
+                        if (type.includes('image')){
+                            form_right_grid_file.innerHTML = `<i class="fa fa-file-photo-o"></i>`
+                        } else if (type.includes('video')) {
+                            form_right_grid_file.innerHTML = `<i class="fa fa-file-movie-o"></i>`
+                        } else if (type.includes('audio')) {
+                            form_right_grid_file.innerHTML = `<i class="fa fa-file-audio-o"></i>`
+                        } else {
+                            form_right_grid_file.innerHTML = `<i class="fa fa-file-o"></i>`
+                        }
                     }
-                } else {
-                    alert('Your browser does not spport File API')
+                };
+
+                for (let file of importField.files) {
+                    dt.items.add(file);
                 }
-                
-            })
+
+                importField.files = dt.files;
+            });
+    
             formRightImport.append(importField)
             formRight.append(formRightGrid,formRightImport)
-        
+
             /* APENDING OF ELEMENTS */
             overlay.append(formLeft,formRight)
             overlayShadow.append(overlay)
             document.body.append(overlayShadow)
-        })    
+        });
 
         /* 2.folder_content */
         const folder_content = document.createElement('div')
         folder_content.classList.add('folder-content')
         const folder_content_container = document.createElement('div')
         folder_content_container.classList.add('folder-content-container')
+        const folder_content_card = document.createElement('div')
+        folder_content_card.classList.add('folder-content-card')
+        
         folder_content.appendChild(folder_content_container)
 
         /* 3.folder_info */
