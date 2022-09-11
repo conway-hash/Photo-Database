@@ -23,13 +23,11 @@ database.persistence.compactDatafile()
 
 let data_array = ''
 app.post('/sort', (request, response) => {
-    if (request.body.sort_keyword) {
-        data_array = request.body
-        /*FOR SEARCH HISTORY TAB*//*
-        const data = request.body;
-        search_history.insert(data);
-        */
-    }
+    data_array = request.body
+    /*FOR SEARCH HISTORY TAB*//*
+    const data = request.body;
+    search_history.insert(data);
+    */
     response.end();
 });
 
@@ -45,28 +43,74 @@ app.get('/api', (request, response) => {
         value = data
     });
     */
-    if (data_array.sort_keyword) {
-        database.find({$or: [
-            { data_name_lc: new RegExp(data_array.sort_keyword.toLowerCase()) },
-            { data_alias_lc: new RegExp(data_array.sort_keyword.toLowerCase()) },
-            { data_description_lc: new RegExp(data_array.sort_keyword.toLowerCase()) }
-        ]}, (err, data) => {
-            if (err) {
-                response.end();
-                return; 
-            }
-            response.json(data);
-        }); 
+    if (data_array.keyword_value) {
+        if (data_array.filter_value === 'date_u') {
+            database.find({$or: [
+                { data_name_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
+                { data_alias_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
+                { data_description_lc: new RegExp(data_array.keyword_value.toLowerCase()) }
+                ]}
+            ).sort({ _id: data_array.direction_value }).exec(function(err, data){
+                if (err) {
+                    response.end();
+                    return; 
+                }
+                response.json(data);
+            })
+        } else if (data_array.filter_value === 'date_m') {
+            database.find({$or: [
+                { data_name_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
+                { data_alias_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
+                { data_description_lc: new RegExp(data_array.keyword_value.toLowerCase()) }
+                ]}
+            ).sort({ data_modified: data_array.direction_value }).exec(function(err, data){
+                if (err) {
+                    response.end();
+                    return; 
+                }
+                response.json(data);
+            }) 
+        } else if (data_array.filter_value === 'name') {
+            database.find({$or: [
+                { data_name_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
+                { data_alias_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
+                { data_description_lc: new RegExp(data_array.keyword_value.toLowerCase()) }
+                ]}
+            ).sort({ data_name: data_array.direction_value }).exec(function(err, data){
+                if (err) {
+                    response.end();
+                    return; 
+                }
+                response.json(data);
+            }) 
+        }
     } else {
-        database.find({}, (err, data) => {
-            if (err) {
-                response.end();
-                return; 
-            }
-            response.json(data);
-        });
+        if (data_array.filter_value === 'date_u') {
+            database.find({}).sort({ _id: data_array.direction_value }).exec(function(err, data){
+                if (err) {
+                    response.end();
+                    return; 
+                }
+                response.json(data);
+            })
+        } else if (data_array.filter_value === 'date_m') {
+            database.find({}).sort({ data_modified: data_array.direction_value }).exec(function(err, data){
+                if (err) {
+                    response.end();
+                    return; 
+                }
+                response.json(data);
+            })
+        } else if (data_array.filter_value === 'name') {
+            database.find({}).sort({ data_name: data_array.direction_value }).exec(function(err, data){
+                if (err) {
+                    response.end();
+                    return; 
+                }
+                response.json(data);
+            })
+        }
     }
-    
     data_array = ''
 });
 

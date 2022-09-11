@@ -1,4 +1,4 @@
-getAllData();
+
 /*INITIAL-ADD-FILE---------------------------------------------------------------------------------------------------*/
 /* FILTER BURGER */
 const burger = document.querySelector('#burger')
@@ -6,6 +6,8 @@ const direction = document.querySelector('#direction')
 const filterList = document.querySelector('#filter-list')
 const filters = document.querySelectorAll('.filter')
 const filterSelected = document.querySelector('#filter-selected')
+const search = document.querySelector('#search')
+const search_bar = document.querySelector('#search-bar')
 
 burger.addEventListener('click', () => {
     filterList.classList.toggle('shown')
@@ -18,15 +20,20 @@ burger.addEventListener('click', () => {
     }
 })
 
+let direction_var = 1
 direction.addEventListener('click', () => {
-    if (direction.className !== 'fa fa-angle-up') {
+    if (direction.className === 'fa fa-angle-down') {
         direction.className = 'fa fa-angle-up'
+        direction_var = -1
+        getAllData(search_bar.value,direction_var,filter_value);
     } else {
         direction.className = 'fa fa-angle-down'
+        direction_var = 1
+        getAllData(search_bar.value,direction_var,filter_value);
     }
-    
 })
 
+let filter_value = document.querySelector('.selected').id
 filters.forEach(filter => {
     filter.addEventListener('click', () => {
         filters.forEach(filter => {filter.classList.remove('selected')})
@@ -35,36 +42,41 @@ filters.forEach(filter => {
         filterList.classList.remove('shown')
         filterList.style.height = '0px'
         direction.classList.remove('expanded')
+        filter_value = document.querySelector('.selected').id
+        getAllData(search_bar.value,direction_var,filter_value)
     })
 })
 
-/* SORT SEARCH */
-const search = document.querySelector('#search')
-const search_bar = document.querySelector('#search-bar')
+getAllData(search_bar.value,direction_var,filter_value);
 
+/* SORT SEARCH */
 search_bar.addEventListener('keydown', (e) => {
     if (e.key == 'Enter') {
         search_bar.blur()
-        getAllData(search_bar.value)
+        getAllData(search_bar.value,direction_var,filter_value)
     }
 })
 
 search.addEventListener('click', () => {
-    getAllData(search_bar.value)
+    getAllData(search_bar.value,direction_var,filter_value)
 })
 
 /* ACTIONS */
 const refresh = document.querySelector('#refresh')
-
 refresh.addEventListener('click', () => {
     search_bar.value = ''
+    direction.className = 'fa fa-angle-down'
+    direction_var = 1
+    filters.forEach(filter => {filter.classList.remove('selected')})
+    document.querySelector('#date_u').classList.add('selected')
+    filter_value = document.querySelector('.selected').id
+    document.querySelector('#filter-selected').innerText = 'By date uploaded'
+    getAllData(search_bar.value,direction_var,filter_value);
     refresh.children[0].classList.add('spin')
     setTimeout(function() {
         refresh.children[0].classList.remove('spin')
     },500)
-    getAllData();
 })
-
 
 /* 1.add-folder-overlay */
 const addFolderAction = document.querySelector('#add-folder');
@@ -116,7 +128,7 @@ addFolderAction.addEventListener('click', () => {
         fetch('/api',data_content);
         overlayShadow.innerHTML = '';
         overlayShadow.remove();
-        getAllData();
+        getAllData(search_bar.value,direction_var,filter_value);
     } )
 
     /* OVERLAY LOOK */
@@ -177,7 +189,6 @@ addFolderAction.addEventListener('click', () => {
             const eye_icon = document.createElement('i')
             eye_icon.classList.add('fa','fa-eye')
             eye_icon.addEventListener('click', () => {
-                console.log(type)
                 console.log('show image')
             })
             const file_overlay_name = document.createElement('p')
@@ -240,11 +251,8 @@ addFolderAction.addEventListener('click', () => {
 })    
 /*SECONDARY-ADD-FILE--------------------------------------------------------------------------------------------------*/
 /* GET DATA FROM DB ON LOAD AND ON ADDING OR DELETING */
-async function getAllData(value) {
-    const sort_keyword = value
-    const sort_filter = 'date'
-    const sort_direction = 'top-bottom'
-    const value_in = {sort_keyword, sort_filter, sort_direction}
+async function getAllData(keyword_value, direction_value, filter_value) {
+    const value_in = {keyword_value, direction_value, filter_value}
     const value_req = {
         method: 'POST',
         headers: {
@@ -349,7 +357,6 @@ async function getAllData(value) {
             saveDot.addEventListener('click',() => {
                 const data_name = formLeftName.value;
                 const data_name_lc = data_name.toLowerCase()
-                console.log(data_name,data_name_lc)
                 const data_alias = formLeftAlias.value;
                 const data_alias_lc = data_alias.toLowerCase()
                 const data_description = formLeftDescription.value;
@@ -367,7 +374,7 @@ async function getAllData(value) {
                 fetch('/update',data_content);
                 overlayShadow.innerHTML = '';
                 overlayShadow.remove();
-                getAllData();
+                getAllData(search_bar.value,direction_var,filter_value);
             })
 
             deleteDot.addEventListener('click', () => {
@@ -383,7 +390,7 @@ async function getAllData(value) {
                 fetch('/deletion',deletion);
                 overlayShadow.innerHTML = '';
                 overlayShadow.remove();
-                getAllData();
+                getAllData(search_bar.value,direction_var,filter_value);
             })
         
             /* OVERLAY LOOK */
@@ -447,7 +454,6 @@ async function getAllData(value) {
                     const eye_icon = document.createElement('i')
                     eye_icon.classList.add('fa','fa-eye')
                     eye_icon.addEventListener('click', () => {
-                        console.log(type)
                         console.log('show image')
                     })
                     const file_overlay_name = document.createElement('p')
@@ -554,7 +560,7 @@ async function getAllData(value) {
 
         /*folder append*/
         folder.append(folder_main,folder_content,folder_info)
-        
-        grid.prepend(folder)
+
+        grid.append(folder)
     }
 }
