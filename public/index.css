@@ -102,7 +102,7 @@ body {
 
 #filter-bar {
     height: 50px;
-    width: 250px;
+    width: 200px;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -116,7 +116,7 @@ body {
 
 #filter-selected {
     height: 50px;
-    width: 250px;
+    width: 200px;
     padding-left: 5px;
     color: rgba(255, 255, 255, 0.60);
     display: flex;
@@ -201,6 +201,19 @@ body {
     border-radius: 15px;
     z-index: -1;
     transition: all 0.5s ease;
+}
+
+.spin {
+    animation: spin 0.5s forwards;
+}
+
+@keyframes spin {
+    0% {
+        rotate: 0deg;
+    }
+    100%{
+        rotate: 360deg;
+    }
 }
 
 /* BOTTOM */

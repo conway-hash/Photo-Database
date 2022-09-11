@@ -1,7 +1,8 @@
-getData();
+getAllData();
 /*INITIAL-ADD-FILE---------------------------------------------------------------------------------------------------*/
 /* FILTER BURGER */
 const burger = document.querySelector('#burger')
+const direction = document.querySelector('#direction')
 const filterList = document.querySelector('#filter-list')
 const filters = document.querySelectorAll('.filter')
 const filterSelected = document.querySelector('#filter-selected')
@@ -9,12 +10,21 @@ const filterSelected = document.querySelector('#filter-selected')
 burger.addEventListener('click', () => {
     filterList.classList.toggle('shown')
     if (filterList.style.height !== filters.length * 50 + 'px') {
-        filterList.parentElement.classList.add('expanded')
+        direction.classList.add('expanded')
         filterList.style.height = filters.length * 50 + 'px'
     } else {
         filterList.style.height = '0px'
-        filterList.parentElement.classList.remove('expanded')
+        direction.classList.remove('expanded')
     }
+})
+
+direction.addEventListener('click', () => {
+    if (direction.className !== 'fa fa-angle-up') {
+        direction.className = 'fa fa-angle-up'
+    } else {
+        direction.className = 'fa fa-angle-down'
+    }
+    
 })
 
 filters.forEach(filter => {
@@ -24,11 +34,38 @@ filters.forEach(filter => {
         filterSelected.textContent = filter.textContent
         filterList.classList.remove('shown')
         filterList.style.height = '0px'
-        filterList.parentElement.classList.remove('expanded')
+        direction.classList.remove('expanded')
     })
 })
 
+/* SORT SEARCH */
+const search = document.querySelector('#search')
+const search_bar = document.querySelector('#search-bar')
+
+search_bar.addEventListener('keydown', (e) => {
+    if (e.key == 'Enter') {
+        search_bar.blur()
+        getAllData(search_bar.value)
+    }
+})
+
+search.addEventListener('click', () => {
+    getAllData(search_bar.value)
+})
+
 /* ACTIONS */
+const refresh = document.querySelector('#refresh')
+
+refresh.addEventListener('click', () => {
+    search_bar.value = ''
+    refresh.children[0].classList.add('spin')
+    setTimeout(function() {
+        refresh.children[0].classList.remove('spin')
+    },500)
+    getAllData();
+})
+
+
 /* 1.add-folder-overlay */
 const addFolderAction = document.querySelector('#add-folder');
 
@@ -61,22 +98,25 @@ addFolderAction.addEventListener('click', () => {
 
     saveDot.addEventListener('click',() => {
         const data_name = formLeftName.value;
+        const data_name_lc = data_name.toLowerCase()
         const data_alias = formLeftAlias.value;
+        const data_alias_lc = data_alias.toLowerCase()
         const data_description = formLeftDescription.value;
+        const data_description_lc = data_description.toLowerCase()
         const _id = String(Date.now());
         const data_modified = _id
-        const data = {data_name, data_alias, data_description, data_modified, _id};
-        const options = {
+        const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description, data_description_lc, data_modified, _id};
+        const data_content = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
         };
-        fetch('/api',options);
+        fetch('/api',data_content);
         overlayShadow.innerHTML = '';
         overlayShadow.remove();
-        getData();
+        getAllData();
     } )
 
     /* OVERLAY LOOK */
@@ -188,7 +228,6 @@ addFolderAction.addEventListener('click', () => {
         }
 
         importField.files = dt.files;
-        console.log(importField.files)
     });
     
     formRightImport.append(importField)
@@ -201,10 +240,28 @@ addFolderAction.addEventListener('click', () => {
 })    
 /*SECONDARY-ADD-FILE--------------------------------------------------------------------------------------------------*/
 /* GET DATA FROM DB ON LOAD AND ON ADDING OR DELETING */
-async function getData() {
+async function getAllData(value) {
+    const sort_keyword = value
+    const sort_filter = 'date'
+    const sort_direction = 'top-bottom'
+    const value_in = {sort_keyword, sort_filter, sort_direction}
+    const value_req = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(value_in)
+    };
+    fetch('/sort',value_req)
+
     const response = await fetch('/api')
     const data = await response.json();
-    
+
+    /*
+    const search_bar = document.querySelector('#search-bar')
+    search_bar.value = ''
+    */
+
     const grid = document.querySelector('#grid')
     grid.innerHTML = ''
     for (item of data) {
@@ -291,22 +348,26 @@ async function getData() {
         
             saveDot.addEventListener('click',() => {
                 const data_name = formLeftName.value;
+                const data_name_lc = data_name.toLowerCase()
+                console.log(data_name,data_name_lc)
                 const data_alias = formLeftAlias.value;
+                const data_alias_lc = data_alias.toLowerCase()
                 const data_description = formLeftDescription.value;
+                const data_description_lc = data_description.toLowerCase()
                 const data_modified = String(Date.now());
                 const _id = folder.id;
-                const data = {data_name, data_alias, data_description, data_modified, _id};
-                const options = {
+                const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description,  data_description_lc, data_modified, _id};
+                const data_content = {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(data)
                 };
-                fetch('/update',options);
+                fetch('/update',data_content);
                 overlayShadow.innerHTML = '';
                 overlayShadow.remove();
-                getData();
+                getAllData();
             })
 
             deleteDot.addEventListener('click', () => {
@@ -322,7 +383,7 @@ async function getData() {
                 fetch('/deletion',deletion);
                 overlayShadow.innerHTML = '';
                 overlayShadow.remove();
-                getData();
+                getAllData();
             })
         
             /* OVERLAY LOOK */
@@ -496,5 +557,4 @@ async function getData() {
         
         grid.prepend(folder)
     }
-    console.log(data)
 }

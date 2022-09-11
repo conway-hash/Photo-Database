@@ -14,8 +14,8 @@
   <div id="top">
 
     <div id="search-container">
-      <i class="fa fa-search"></i>
-      <input type="text" id="search-bar" placeholder="Search...">
+      <i class="fa fa-search" id="search"></i>
+      <input type="text" id="search-bar" placeholder="Search..." autocomplete="off">
     </div>
 
     <div id="filter-container">
@@ -28,9 +28,14 @@
           <div class="filter" id="f3">By size</div>
         </div>
       </div>
+      <i class="fa fa-angle-down" id="direction"></i>
     </div>
 
     <div id="actions">
+      <div class="action" id="refresh">
+        <i class="fa fa-refresh"></i>
+        <div class="info">Refresh</div>
+      </div>
       <div class="action" id="add-folder">
         <i class="fa fa-folder-o"></i>
         <div class="info">Add folder</div>
