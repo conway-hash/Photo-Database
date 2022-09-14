@@ -126,6 +126,11 @@ addFolderAction.addEventListener('click', () => {
             body: JSON.stringify(data)
         };
         fetch('/api',data_content);
+        const formData = new FormData()
+        for (let i = 0; i < importField.files.length; i++) {
+            formData.append("files", importField.files[i])
+        }
+        fetch("/multiple", {method: "POST",body: formData});
         overlayShadow.innerHTML = '';
         overlayShadow.remove();
         getAllData(search_bar.value,direction_var,filter_value);
@@ -520,9 +525,44 @@ async function getAllData(keyword_value, direction_value, filter_value) {
         folder_content.classList.add('folder-content')
         const folder_content_container = document.createElement('div')
         folder_content_container.classList.add('folder-content-container')
-        const folder_content_card = document.createElement('div')
-        folder_content_card.classList.add('folder-content-card')
+
+        const data_id = folder.id;
+        const datasend = {data_id};
+        const id = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datasend)
+        };
+        fetch('/fetchsend',id);
+
+        const response = await fetch('/fetchrecieve')
+        const datarecieve = await response.json();
         
+        let grid_index = 0
+        datarecieve.forEach(file => {
+            if (grid_index < 15) {
+                const folder_content_card = document.createElement('div')
+                folder_content_card.classList.add('folder-content-card')
+                console.log(file.filename,file.id,file.path,file.size,file.mimetype)
+                if (file.mimetype.includes('image')){
+                    folder_content_card.innerHTML = `<img class='thumbnail' src="${file.path}" alt="${file.filename}">`
+                } else if (file.mimetype.includes('video')) {
+                    folder_content_card.innerHTML = `<i class="fa fa-file-movie-o"></i>`
+                } else if (file.mimetype.includes('audio')) {
+                    folder_content_card.innerHTML = `<i class="fa fa-file-audio-o"></i>`
+                } else {
+                    folder_content_card.innerHTML = `<i class="fa fa-file-o"></i>`
+                }
+                folder_content_container.appendChild(folder_content_card)
+                
+            } else {
+                return
+            }
+            grid_index++
+        })
+
         folder_content.appendChild(folder_content_container)
 
         /* 3.folder_info */

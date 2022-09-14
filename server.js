@@ -1,18 +1,42 @@
 const express = require('express');
+const multer = require('multer');
 const Datastore = require('nedb');
+const path = require('path')
 
 const app = express();
 app.listen(3000);
 app.use(express.static('public'));
+app.use("/files", express.static(path.join(__dirname + "/files")))
 app.use(express.json({limit: '1mb'}));
 
-const database = new Datastore('database.db');
-database.loadDatabase();
+const text_database = new Datastore('text_database.db');
+text_database.loadDatabase();
+
+const files_database = new Datastore('files_database.db');
+files_database.loadDatabase();
+
+const fileStorageEngine = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "./files")
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+});
+
+const upload = multer({ storage: fileStorageEngine })
 /*
-database.remove({}, { multi: true },(err, numRemoved) => {
+text_database.remove({}, { multi: true },(err, numRemoved) => {
     console.log(numRemoved)
 });
-database.persistence.compactDatafile()
+text_database.persistence.compactDatafile()
+*/
+
+/*
+files_database.remove({}, { multi: true },(err, numRemoved) => {
+    console.log(numRemoved)
+});
+files_database.persistence.compactDatafile()
 */
 
 let data_array = ''
@@ -24,7 +48,7 @@ app.post('/sort', (request, response) => {
 app.get('/api', (request, response) => {
     if (data_array.keyword_value) {
         if (data_array.filter_value === 'date_u') {
-            database.find({$or: [
+            text_database.find({$or: [
                 { data_name_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
                 { data_alias_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
                 { data_description_lc: new RegExp(data_array.keyword_value.toLowerCase()) }
@@ -37,7 +61,7 @@ app.get('/api', (request, response) => {
                 response.json(data);
             })
         } else if (data_array.filter_value === 'date_m') {
-            database.find({$or: [
+            text_database.find({$or: [
                 { data_name_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
                 { data_alias_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
                 { data_description_lc: new RegExp(data_array.keyword_value.toLowerCase()) }
@@ -50,7 +74,7 @@ app.get('/api', (request, response) => {
                 response.json(data);
             }) 
         } else if (data_array.filter_value === 'name') {
-            database.find({$or: [
+            text_database.find({$or: [
                 { data_name_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
                 { data_alias_lc: new RegExp(data_array.keyword_value.toLowerCase()) },
                 { data_description_lc: new RegExp(data_array.keyword_value.toLowerCase()) }
@@ -65,7 +89,7 @@ app.get('/api', (request, response) => {
         }
     } else {
         if (data_array.filter_value === 'date_u') {
-            database.find({}).sort({ _id: data_array.direction_value }).exec(function(err, data){
+            text_database.find({}).sort({ _id: data_array.direction_value }).exec(function(err, data){
                 if (err) {
                     response.end();
                     return; 
@@ -73,7 +97,7 @@ app.get('/api', (request, response) => {
                 response.json(data);
             })
         } else if (data_array.filter_value === 'date_m') {
-            database.find({}).sort({ data_modified: data_array.direction_value }).exec(function(err, data){
+            text_database.find({}).sort({ data_modified: data_array.direction_value }).exec(function(err, data){
                 if (err) {
                     response.end();
                     return; 
@@ -81,7 +105,7 @@ app.get('/api', (request, response) => {
                 response.json(data);
             })
         } else if (data_array.filter_value === 'name') {
-            database.find({}).sort({ data_name: data_array.direction_value }).exec(function(err, data){
+            text_database.find({}).sort({ data_name: data_array.direction_value }).exec(function(err, data){
                 if (err) {
                     response.end();
                     return; 
@@ -93,25 +117,55 @@ app.get('/api', (request, response) => {
     data_array = ''
 });
 
+let data_id = ''
 app.post('/api', (request, response) => {
     const data = request.body;
-    database.insert(data);
+    data_id = data._id
+    text_database.insert(data);
     response.end();
 });
 
+app.post("/multiple", upload.array("files"),(req, res) => {
+    const data = req.files
+    data.forEach(function (arrayItem) {
+        arrayItem.id = data_id;
+        files_database.insert(arrayItem)
+    });
+    data_id =''
+    res.end()
+})
+
+let data_id1 = ''
+app.post("/fetchsend", (req, res) => {
+    data_id1 = req.body.data_id
+    res.end()
+})
+
+app.get("/fetchrecieve", (req, res) => {
+    files_database.find({ id: data_id1 }, function(err, data){
+        if (err) {
+            response.end();
+            return; 
+        }
+        res.json(data);
+    })
+    data_id1 = ''
+})
+
 app.post('/deletion', (request, response) => {
-    database.remove({_id: request.body.data_id}, {},(err, numRemoved) => {
+    text_database.remove({_id: request.body.data_id}, {},(err, numRemoved) => {
         if (err) {
             response.end();
             return; 
         }
     });
-    database.persistence.compactDatafile()
+    text_database.persistence.compactDatafile()
+    response.end();
 });
 
 app.post('/update', (request, response) => {
     const data = request.body;
-    database.update(
+    text_database.update(
         {_id: data._id},
         { $set: { 
             data_name: data.data_name,
@@ -130,5 +184,6 @@ app.post('/update', (request, response) => {
             }
         }
     );
-    database.persistence.compactDatafile()
+    text_database.persistence.compactDatafile()
+    response.end();
 });
