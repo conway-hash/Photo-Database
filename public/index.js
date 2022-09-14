@@ -20,15 +20,15 @@ burger.addEventListener('click', () => {
     }
 })
 
-let direction_var = 1
+let direction_var = -1
 direction.addEventListener('click', () => {
     if (direction.className === 'fa fa-angle-down') {
         direction.className = 'fa fa-angle-up'
-        direction_var = -1
+        direction_var = 1
         getAllData(search_bar.value,direction_var,filter_value);
     } else {
         direction.className = 'fa fa-angle-down'
-        direction_var = 1
+        direction_var = -1
         getAllData(search_bar.value,direction_var,filter_value);
     }
 })
@@ -66,7 +66,7 @@ const refresh = document.querySelector('#refresh')
 refresh.addEventListener('click', () => {
     search_bar.value = ''
     direction.className = 'fa fa-angle-down'
-    direction_var = 1
+    direction_var = -1
     filters.forEach(filter => {filter.classList.remove('selected')})
     document.querySelector('#date_u').classList.add('selected')
     filter_value = document.querySelector('.selected').id

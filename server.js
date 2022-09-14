@@ -8,12 +8,6 @@ app.use(express.json({limit: '1mb'}));
 
 const database = new Datastore('database.db');
 database.loadDatabase();
-
-/*FOR SEARCH HISTORY TAB*//*
-const search_history = new Datastore('search_history.db');
-search_history.loadDatabase();
-*/
-
 /*
 database.remove({}, { multi: true },(err, numRemoved) => {
     console.log(numRemoved)
@@ -24,25 +18,10 @@ database.persistence.compactDatafile()
 let data_array = ''
 app.post('/sort', (request, response) => {
     data_array = request.body
-    /*FOR SEARCH HISTORY TAB*//*
-    const data = request.body;
-    search_history.insert(data);
-    */
     response.end();
 });
 
 app.get('/api', (request, response) => {
-    
-    /*FOR SEARCH HISTORY TAB*//*
-    search_history.find({}, (err, data) => {
-        if (err) {
-            response.end();
-            return; 
-        }
-        console.log(data)
-        value = data
-    });
-    */
     if (data_array.keyword_value) {
         if (data_array.filter_value === 'date_u') {
             database.find({$or: [
