@@ -545,9 +545,9 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             if (grid_index < 15) {
                 const folder_content_card = document.createElement('div')
                 folder_content_card.classList.add('folder-content-card')
-                console.log(file.filename,file.id,file.path,file.size,file.mimetype)
+                console.log(file)
                 if (file.mimetype.includes('image')){
-                    folder_content_card.innerHTML = `<img class='thumbnail' src="${file.path}" alt="${file.filename}">`
+                    folder_content_card.innerHTML = `<img class='thumbnail' src="${file.path}" alt="${file.originalname}">`
                 } else if (file.mimetype.includes('video')) {
                     folder_content_card.innerHTML = `<i class="fa fa-file-movie-o"></i>`
                 } else if (file.mimetype.includes('audio')) {

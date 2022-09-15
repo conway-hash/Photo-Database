@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const Datastore = require('nedb');
 const path = require('path')
+const fs = require('fs')
 
 const app = express();
 app.listen(3000);
@@ -20,7 +21,7 @@ const fileStorageEngine = multer.diskStorage({
         cb(null, "./files")
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname);
+        cb(null, Date.now() + '--' + file.originalname);
     }
 });
 
@@ -30,9 +31,7 @@ text_database.remove({}, { multi: true },(err, numRemoved) => {
     console.log(numRemoved)
 });
 text_database.persistence.compactDatafile()
-*/
 
-/*
 files_database.remove({}, { multi: true },(err, numRemoved) => {
     console.log(numRemoved)
 });
@@ -159,7 +158,27 @@ app.post('/deletion', (request, response) => {
             return; 
         }
     });
+    files_database.find({ id: request.body.data_id }, function(err, data){
+        if (err) {
+            response.end();
+            return; 
+        }
+        for (item of data) {
+            fs.unlink(item.path, (err) => {
+                if (err) {
+                    throw err;
+                }
+            });
+        }
+    })
+    files_database.remove({ id: request.body.data_id },  { multi: true },(err, numRemoved) => {
+        if (err) {
+            response.end();
+            return; 
+        }
+    });
     text_database.persistence.compactDatafile()
+    files_database.persistence.compactDatafile()
     response.end();
 });
 
