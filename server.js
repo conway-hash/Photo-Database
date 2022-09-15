@@ -125,6 +125,32 @@ app.post('/api', (request, response) => {
     response.end();
 });
 
+app.post('/update', (request, response) => {
+    const data = request.body;
+    text_database.update(
+        {_id: data._id},
+        { $set: { 
+            data_name: data.data_name,
+            data_name_lc: data.data_name.toLowerCase(),
+            data_alias: data.data_alias,
+            data_alias_lc: data.data_alias.toLowerCase(),
+            data_description: data.data_description,
+            data_description_lc: data.data_description.toLowerCase(),
+            data_modified: data.data_modified
+        } },
+        {}, 
+        function (err, numReplaced) {
+            if (err) {
+                response.end();
+                return;
+            }
+        }
+    );
+    data_id = data._id
+    text_database.persistence.compactDatafile()
+    response.end();
+});
+
 app.post("/multiple", upload.array("files"),(req, res) => {
     const data = req.files
     data.forEach(function (arrayItem) {
@@ -207,30 +233,5 @@ app.post('/deletion', (request, response) => {
         });
         files_database.persistence.compactDatafile()
     }
-    response.end();
-});
-
-app.post('/update', (request, response) => {
-    const data = request.body;
-    text_database.update(
-        {_id: data._id},
-        { $set: { 
-            data_name: data.data_name,
-            data_name_lc: data.data_name.toLowerCase(),
-            data_alias: data.data_alias,
-            data_alias_lc: data.data_alias.toLowerCase(),
-            data_description: data.data_description,
-            data_description_lc: data.data_description.toLowerCase(),
-            data_modified: data.data_modified
-        } },
-        {}, 
-        function (err, numReplaced) {
-            if (err) {
-                response.end();
-                return;
-            }
-        }
-    );
-    text_database.persistence.compactDatafile()
     response.end();
 });

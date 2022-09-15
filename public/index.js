@@ -145,6 +145,7 @@ addFolderAction.addEventListener('click', () => {
     formLeftName.id = 'form-left-name';
     formLeftName.type = 'text';
     formLeftName.placeholder = 'Folder Title...';
+    formLeftName.maxLength = '20'
     const formLeftAlias = document.createElement('textarea');
     formLeftAlias.id = 'form-left-alias';
     formLeftAlias.placeholder = 'Alias names...';
@@ -373,6 +374,12 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                 };
                 fetch('/update',data_content);
 
+                const formData = new FormData()
+                for (let i = 0; i < importField.files.length; i++) {
+                    formData.append("files", importField.files[i])
+                }
+                fetch("/multiple", {method: "POST",body: formData});
+
                 if (delete_array.length !== 0) {
                     const data = { array:delete_array };
                     const deletion = {
@@ -416,6 +423,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             formLeftName.id = 'form-left-name';
             formLeftName.type = 'text';
             formLeftName.placeholder = 'Folder Title...';
+            formLeftName.maxLength = '20'
             formLeftName.value = `${fmc_h4.textContent}`
             const formLeftAlias = document.createElement('textarea');
             formLeftAlias.id = 'form-left-alias';

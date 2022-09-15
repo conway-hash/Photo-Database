@@ -278,6 +278,7 @@ body {
     background: #2D2D2D;
     box-sizing: border-box;
     cursor: pointer;
+    overflow: hidden;
 }
 .folder-main-cover{ 
     width: 100%;
@@ -304,6 +305,7 @@ body {
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
+    overflow: hidden;
 }
 
 .folder-main-content h4 {
