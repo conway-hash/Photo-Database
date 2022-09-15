@@ -26,6 +26,7 @@ const fileStorageEngine = multer.diskStorage({
 });
 
 const upload = multer({ storage: fileStorageEngine })
+
 /*
 text_database.remove({}, { multi: true },(err, numRemoved) => {
     console.log(numRemoved)
@@ -152,33 +153,60 @@ app.get("/fetchrecieve", (req, res) => {
 })
 
 app.post('/deletion', (request, response) => {
-    text_database.remove({_id: request.body.data_id}, {},(err, numRemoved) => {
-        if (err) {
-            response.end();
-            return; 
-        }
-    });
-    files_database.find({ id: request.body.data_id }, function(err, data){
-        if (err) {
-            response.end();
-            return; 
-        }
-        for (item of data) {
-            fs.unlink(item.path, (err) => {
+    if (request.body.array) {
+        const array = request.body.array
+        for (array_item of array) {
+            files_database.find({ _id: array_item }, function(err, data){
                 if (err) {
-                    throw err;
+                    response.end();
+                    return; 
+                }
+                for (data_item of data) {
+                    fs.unlink(data_item.path, (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    });
+                }
+            })
+            files_database.remove({ _id: array_item },  { multi: true },(err, numRemoved) => {
+                if (err) {
+                    response.end();
+                    return; 
                 }
             });
+            files_database.persistence.compactDatafile()
         }
-    })
-    files_database.remove({ id: request.body.data_id },  { multi: true },(err, numRemoved) => {
-        if (err) {
-            response.end();
-            return; 
-        }
-    });
-    text_database.persistence.compactDatafile()
-    files_database.persistence.compactDatafile()
+    } else {
+        const value = request.body.data_id
+        text_database.remove({_id: value}, {},(err, numRemoved) => {
+            if (err) {
+                response.end();
+                return; 
+            }
+        });
+        text_database.persistence.compactDatafile()
+        files_database.find({ id: value }, function(err, data){
+            if (err) {
+                response.end();
+                return; 
+            }
+            for (item of data) {
+                fs.unlink(item.path, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            }
+        })
+        files_database.remove({ id: value },  { multi: true },(err, numRemoved) => {
+            if (err) {
+                response.end();
+                return; 
+            }
+        });
+        files_database.persistence.compactDatafile()
+    }
     response.end();
 });
 

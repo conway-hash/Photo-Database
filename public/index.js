@@ -270,11 +270,6 @@ async function getAllData(keyword_value, direction_value, filter_value) {
     const response = await fetch('/api')
     const data = await response.json();
 
-    /*
-    const search_bar = document.querySelector('#search-bar')
-    search_bar.value = ''
-    */
-
     const grid = document.querySelector('#grid')
     grid.innerHTML = ''
     for (item of data) {
@@ -326,7 +321,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
         folder_main.append(folder_main_cover,folder_main_content)
 
         /* folder open */
-        folder_main.addEventListener('click', () => {
+        folder_main.addEventListener('click', async () => {
             const overlayShadow = document.createElement('div');
             overlayShadow.id = 'overlay-shadow';
         
@@ -377,9 +372,23 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     body: JSON.stringify(data)
                 };
                 fetch('/update',data_content);
+
+                if (delete_array.length !== 0) {
+                    const data = { array:delete_array };
+                    const deletion = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    };
+                    fetch('/deletion',deletion);
+                    delete_array = ''
+                }
+
                 overlayShadow.innerHTML = '';
                 overlayShadow.remove();
-                getAllData(search_bar.value,direction_var,filter_value);
+                getAllData(search_bar.value,direction_var,filter_value);   
             })
 
             deleteDot.addEventListener('click', () => {
@@ -425,6 +434,71 @@ async function getAllData(keyword_value, direction_value, filter_value) {
 
             const formRightGrid = document.createElement('div');
             formRightGrid.id = 'form-right-grid';
+
+            /* HERE */
+            const data_id = folder.id;
+            const datasend = {data_id};
+            const id = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datasend)
+            };
+            fetch('/fetchsend',id);
+
+            const response = await fetch('/fetchrecieve')
+            const datarecieve = await response.json();
+
+            let delete_array = []
+            for(item of datarecieve){
+                let current_item = item
+                let form_right_grid_file = document.createElement('div')
+                form_right_grid_file.classList.add('form-right-grid-file')
+
+                const file_overlay = document.createElement('div')
+                const trash_icon = document.createElement('i')
+                
+
+                trash_icon.classList.add('fa','fa-trash-o')
+                trash_icon.addEventListener('click', () => {
+                    delete_array.push(current_item._id)
+                    trash_icon.parentElement.parentElement.remove()
+                })
+
+                const eye_icon = document.createElement('i')
+                eye_icon.classList.add('fa','fa-eye')
+                eye_icon.addEventListener('click', () => {
+                    console.log('show image')
+                })
+
+                const file_overlay_name = document.createElement('p')
+                file_overlay_name.classList.add('file-overlay-name')
+                file_overlay_name.innerHTML = `${item.originalname}`
+        
+                form_right_grid_file.addEventListener('mouseenter', () => {
+                    file_overlay.classList.add('file-overlay')
+                    file_overlay.append(eye_icon,trash_icon,file_overlay_name)
+                    form_right_grid_file.appendChild(file_overlay)
+                })
+
+                form_right_grid_file.addEventListener('mouseleave', () => {
+                    file_overlay.remove()
+                })
+
+                if (item.mimetype.includes('image')){
+                    form_right_grid_file.innerHTML = `
+                        <img class="thumbnail" src="${item.path}" alt="${item.originalname}">
+                    `
+                } else if (item.mimetype.includes('video')) {
+                    form_right_grid_file.innerHTML = `<i class="fa fa-file-movie-o"></i>`
+                } else if (item.mimetype.includes('audio')) {
+                    form_right_grid_file.innerHTML = `<i class="fa fa-file-audio-o"></i>`
+                } else {
+                    form_right_grid_file.innerHTML = `<i class="fa fa-file-o"></i>`
+                }
+                formRightGrid.appendChild(form_right_grid_file)
+            };
 
             const formRightImport = document.createElement('form');
             formRightImport.id = 'form-right-import';
@@ -501,6 +575,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         } else {
                             form_right_grid_file.innerHTML = `<i class="fa fa-file-o"></i>`
                         }
+                        formRightGrid.appendChild(form_right_grid_file)
                     }
                 };
 
