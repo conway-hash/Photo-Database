@@ -95,13 +95,14 @@ addFolderAction.addEventListener('click', () => {
     iconCloseDot.classList.add('fa','fa-close');
     closeDot.append(iconCloseDot);
 
-    const saveDot = document.createElement('div');
+    const saveDot = document.createElement('button');
     saveDot.classList.add('dot','save-dot');
+    saveDot.type = 'submit'
     const iconSaveDot = document.createElement('i');
     iconSaveDot.classList.add('fa','fa-save');
     saveDot.append(iconSaveDot);
 
-    overlay.append(closeDot,saveDot);
+    overlay.append(closeDot);
 
     closeDot.addEventListener('click',() => {
         overlayShadow.innerHTML = '';
@@ -109,36 +110,38 @@ addFolderAction.addEventListener('click', () => {
     });
 
     saveDot.addEventListener('click', async () => {
-        const data_name = formLeftName.value;
-        const data_name_lc = data_name.toLowerCase()
-        const data_alias = formLeftAlias.value;
-        const data_alias_lc = data_alias.toLowerCase()
-        const data_description = formLeftDescription.value;
-        const data_description_lc = data_description.toLowerCase()
-        const _id = String(Date.now());
-        const data_modified = _id
-        const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description, data_description_lc, data_modified, _id};
-        const data_content = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        };
-        fetch('/api',data_content);
-        const formData = new FormData()
-        for (let i = 0; i < importField.files.length; i++) {
-            formData.append("files", importField.files[i])
+        if (formLeftName.value !== '') {
+            const data_name = formLeftName.value;
+            const data_name_lc = data_name.toLowerCase()
+            const data_alias = formLeftAlias.value;
+            const data_alias_lc = data_alias.toLowerCase()
+            const data_description = formLeftDescription.value;
+            const data_description_lc = data_description.toLowerCase()
+            const _id = String(Date.now());
+            const data_modified = _id
+            const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description, data_description_lc, data_modified, _id};
+            const data_content = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            };
+            fetch('/api',data_content);
+            const formData = new FormData()
+            for (let i = 0; i < importField.files.length; i++) {
+                formData.append("files", importField.files[i])
+            }
+            await fetch("/multiple", {method: "POST",body: formData});
+            getAllData(search_bar.value,direction_var,filter_value);
+            overlayShadow.innerHTML = '';
+            overlayShadow.remove();
         }
-        await fetch("/multiple", {method: "POST",body: formData});
-        getAllData(search_bar.value,direction_var,filter_value);
-        overlayShadow.innerHTML = '';
-        overlayShadow.remove();
     })
 
     /* OVERLAY LOOK */
     /* 1.form left */
-    const formLeft = document.createElement('div');
+    const formLeft = document.createElement('form');
     formLeft.id = 'form-left';
 
     const formLeftName = document.createElement('input');
@@ -146,6 +149,7 @@ addFolderAction.addEventListener('click', () => {
     formLeftName.type = 'text';
     formLeftName.placeholder = 'Folder Title...';
     formLeftName.maxLength = '20'
+    formLeftName.required = true
     const formLeftAlias = document.createElement('textarea');
     formLeftAlias.id = 'form-left-alias';
     formLeftAlias.placeholder = 'Alias names...';
@@ -153,7 +157,7 @@ addFolderAction.addEventListener('click', () => {
     formLeftDescription.id = 'form-left-description';
     formLeftDescription.placeholder = 'Description...';
 
-    formLeft.append(formLeftName,formLeftAlias,formLeftDescription);
+    formLeft.append(formLeftName,formLeftAlias,formLeftDescription,saveDot);
 
     /* 2.form-right */
     const formRight = document.createElement('div');
@@ -336,8 +340,9 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             iconCloseDot.classList.add('fa','fa-close');
             closeDot.append(iconCloseDot);
         
-            const saveDot = document.createElement('div');
+            const saveDot = document.createElement('button');
             saveDot.classList.add('dot','save-dot');
+            saveDot.type = 'submit'
             const iconSaveDot = document.createElement('i');
             iconSaveDot.classList.add('fa','fa-save');
             saveDot.append(iconSaveDot);
@@ -348,7 +353,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             iconDeleteDot.classList.add('fa','fa-trash');
             deleteDot.append(iconDeleteDot);
         
-            overlay.append(closeDot,saveDot,deleteDot);
+            overlay.append(closeDot,deleteDot);
         
             closeDot.addEventListener('click',() => {
                 overlayShadow.innerHTML = '';
@@ -356,45 +361,45 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             });
         
             saveDot.addEventListener('click', async() => {
-                const data_name = formLeftName.value;
-                const data_name_lc = data_name.toLowerCase()
-                const data_alias = formLeftAlias.value;
-                const data_alias_lc = data_alias.toLowerCase()
-                const data_description = formLeftDescription.value;
-                const data_description_lc = data_description.toLowerCase()
-                const data_modified = String(Date.now());
-                const _id = folder.id;
-                const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description,  data_description_lc, data_modified, _id};
-                const data_content = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                };
-                fetch('/update',data_content);
-
-                const formData = new FormData()
-                for (let i = 0; i < importField.files.length; i++) {
-                    formData.append("files", importField.files[i])
-                }
-                await fetch("/multiple", {method: "POST",body: formData});
-
-                if (delete_array.length !== 0) {
-                    const data = { array:delete_array };
-                    const deletion = {
+                if (formLeftName.value !== '') {
+                    const data_name = formLeftName.value;
+                    const data_name_lc = data_name.toLowerCase()
+                    const data_alias = formLeftAlias.value;
+                    const data_alias_lc = data_alias.toLowerCase()
+                    const data_description = formLeftDescription.value;
+                    const data_description_lc = data_description.toLowerCase()
+                    const data_modified = String(Date.now());
+                    const _id = folder.id;
+                    const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description,  data_description_lc, data_modified, _id};
+                    const data_content = {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(data)
                     };
-                    fetch('/deletion',deletion);
-                    delete_array = ''
+                    fetch('/update',data_content);
+                    const formData = new FormData()
+                    for (let i = 0; i < importField.files.length; i++) {
+                        formData.append("files", importField.files[i])
+                    }
+                    await fetch("/multiple", {method: "POST",body: formData});
+                    if (delete_array.length !== 0) {
+                        const data = { array:delete_array };
+                        const deletion = {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        };
+                        fetch('/deletion',deletion);
+                        delete_array = ''
+                    }
+                    getAllData(search_bar.value,direction_var,filter_value);   
+                    overlayShadow.innerHTML = '';
+                    overlayShadow.remove();
                 }
-                getAllData(search_bar.value,direction_var,filter_value);   
-                overlayShadow.innerHTML = '';
-                overlayShadow.remove();
             })
 
             deleteDot.addEventListener('click', () => {
@@ -415,7 +420,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
         
             /* OVERLAY LOOK */
             /* 1.form left */
-            const formLeft = document.createElement('div');
+            const formLeft = document.createElement('form');
             formLeft.id = 'form-left';
         
             const formLeftName = document.createElement('input');
@@ -423,6 +428,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             formLeftName.type = 'text';
             formLeftName.placeholder = 'Folder Title...';
             formLeftName.maxLength = '20'
+            formLeftName.required = true
             formLeftName.value = `${fmc_h4.textContent}`
             const formLeftAlias = document.createElement('textarea');
             formLeftAlias.id = 'form-left-alias';
@@ -433,7 +439,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             formLeftDescription.placeholder = 'Description...';
             formLeftDescription.value = `${icd_p.textContent}`
         
-            formLeft.append(formLeftName,formLeftAlias,formLeftDescription);
+            formLeft.append(formLeftName,formLeftAlias,formLeftDescription,saveDot);
         
             /* 2.form-right */
             const formRight = document.createElement('div');
