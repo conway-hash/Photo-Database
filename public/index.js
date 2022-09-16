@@ -108,7 +108,7 @@ addFolderAction.addEventListener('click', () => {
         overlayShadow.remove();
     });
 
-    saveDot.addEventListener('click',() => {
+    saveDot.addEventListener('click', async () => {
         const data_name = formLeftName.value;
         const data_name_lc = data_name.toLowerCase()
         const data_alias = formLeftAlias.value;
@@ -130,11 +130,11 @@ addFolderAction.addEventListener('click', () => {
         for (let i = 0; i < importField.files.length; i++) {
             formData.append("files", importField.files[i])
         }
-        fetch("/multiple", {method: "POST",body: formData});
+        await fetch("/multiple", {method: "POST",body: formData});
+        getAllData(search_bar.value,direction_var,filter_value);
         overlayShadow.innerHTML = '';
         overlayShadow.remove();
-        getAllData(search_bar.value,direction_var,filter_value);
-    } )
+    })
 
     /* OVERLAY LOOK */
     /* 1.form left */
@@ -215,7 +215,7 @@ addFolderAction.addEventListener('click', () => {
                 const reader = new FileReader()
                 reader.addEventListener('load', (event) => {
                     if (type.includes('image')){
-                        form_right_grid_file.innerHTML = `<img class="thumbnail" src="${event.target.result}"/>`
+                        form_right_grid_file.innerHTML = `<img class="thumbnail" src="${event.target.result}" loading="lazy" decoding="async">`
                     } else if (type.includes('video')) {
                         form_right_grid_file.innerHTML = `<i class="fa fa-file-movie-o"></i>`
                     } else if (type.includes('audio')) {
@@ -355,7 +355,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                 overlayShadow.remove();
             });
         
-            saveDot.addEventListener('click',() => {
+            saveDot.addEventListener('click', async() => {
                 const data_name = formLeftName.value;
                 const data_name_lc = data_name.toLowerCase()
                 const data_alias = formLeftAlias.value;
@@ -378,7 +378,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                 for (let i = 0; i < importField.files.length; i++) {
                     formData.append("files", importField.files[i])
                 }
-                fetch("/multiple", {method: "POST",body: formData});
+                await fetch("/multiple", {method: "POST",body: formData});
 
                 if (delete_array.length !== 0) {
                     const data = { array:delete_array };
@@ -392,10 +392,9 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     fetch('/deletion',deletion);
                     delete_array = ''
                 }
-
+                getAllData(search_bar.value,direction_var,filter_value);   
                 overlayShadow.innerHTML = '';
                 overlayShadow.remove();
-                getAllData(search_bar.value,direction_var,filter_value);   
             })
 
             deleteDot.addEventListener('click', () => {
@@ -409,9 +408,9 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     body: JSON.stringify(data)
                 };
                 fetch('/deletion',deletion);
+                getAllData(search_bar.value,direction_var,filter_value);
                 overlayShadow.innerHTML = '';
                 overlayShadow.remove();
-                getAllData(search_bar.value,direction_var,filter_value);
             })
         
             /* OVERLAY LOOK */
@@ -496,7 +495,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
 
                 if (item.mimetype.includes('image')){
                     form_right_grid_file.innerHTML = `
-                        <img class="thumbnail" src="${item.path}" alt="${item.originalname}">
+                        <img class="thumbnail" src="${item.path}" loading="lazy" decoding="async" alt="${item.originalname}">
                     `
                 } else if (item.mimetype.includes('video')) {
                     form_right_grid_file.innerHTML = `<i class="fa fa-file-movie-o"></i>`
@@ -561,7 +560,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         const reader = new FileReader()
                         reader.addEventListener('load', (event) => {
                             if (type.includes('image')){
-                                form_right_grid_file.innerHTML = `<img class="thumbnail" src="${event.target.result}"/>`
+                                form_right_grid_file.innerHTML = `<img class="thumbnail" src="${event.target.result}" loading="lazy" decoding="async">`
                             } else if (type.includes('video')) {
                                 form_right_grid_file.innerHTML = `<i class="fa fa-file-movie-o"></i>`
                             } else if (type.includes('audio')) {
@@ -628,9 +627,9 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             if (grid_index < 15) {
                 const folder_content_card = document.createElement('div')
                 folder_content_card.classList.add('folder-content-card')
-                console.log(file)
+                /*console.log(file)*/
                 if (file.mimetype.includes('image')){
-                    folder_content_card.innerHTML = `<img class='thumbnail' src="${file.path}" alt="${file.originalname}">`
+                    folder_content_card.innerHTML = `<img class='thumbnail' src="${file.path}" loading="lazy" decoding="async" alt="${file.originalname}">`
                 } else if (file.mimetype.includes('video')) {
                     folder_content_card.innerHTML = `<i class="fa fa-file-movie-o"></i>`
                 } else if (file.mimetype.includes('audio')) {

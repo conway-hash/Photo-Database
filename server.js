@@ -21,8 +21,8 @@ const fileStorageEngine = multer.diskStorage({
         cb(null, "./files")
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + '--' + file.originalname);
-    }
+        cb(null, Date.now() + '--' + Buffer.from(file.originalname, 'latin1').toString('utf8'));
+    },
 });
 
 const upload = multer({ storage: fileStorageEngine })
@@ -153,7 +153,9 @@ app.post('/update', (request, response) => {
 
 app.post("/multiple", upload.array("files"),(req, res) => {
     const data = req.files
-    data.forEach(function (arrayItem) {
+    data.forEach(arrayItem => {
+        const namefix = Buffer.from(arrayItem.originalname, 'latin1').toString('utf8')
+        arrayItem.originalname = namefix
         arrayItem.id = data_id;
         files_database.insert(arrayItem)
     });

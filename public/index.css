@@ -527,6 +527,8 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: 15px;
+    content-visibility: auto;
+    background-color: #222222;
 }
 
 .file-overlay {
