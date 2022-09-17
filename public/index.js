@@ -95,14 +95,13 @@ addFolderAction.addEventListener('click', () => {
     iconCloseDot.classList.add('fa','fa-close');
     closeDot.append(iconCloseDot);
 
-    const saveDot = document.createElement('button');
+    const saveDot = document.createElement('div');
     saveDot.classList.add('dot','save-dot');
-    saveDot.type = 'submit'
     const iconSaveDot = document.createElement('i');
     iconSaveDot.classList.add('fa','fa-save');
     saveDot.append(iconSaveDot);
 
-    overlay.append(closeDot);
+    overlay.append(closeDot,saveDot);
 
     closeDot.addEventListener('click',() => {
         overlayShadow.innerHTML = '';
@@ -111,6 +110,18 @@ addFolderAction.addEventListener('click', () => {
 
     saveDot.addEventListener('click', async () => {
         if (formLeftName.value !== '') {
+            const body = { data_name : formLeftName.value}
+            fetch("/namecheck",{
+                method: "POST", 
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(body)
+            })
+            const response_none = await fetch("/namecheck")
+            const response_text = await response_none.json()
+            if (response_text.samename) {
+                alert('File name already taken!')
+                return
+            }
             const data_name = formLeftName.value;
             const data_name_lc = data_name.toLowerCase()
             const data_alias = formLeftAlias.value;
@@ -136,6 +147,8 @@ addFolderAction.addEventListener('click', () => {
             getAllData(search_bar.value,direction_var,filter_value);
             overlayShadow.innerHTML = '';
             overlayShadow.remove();
+        } else {
+            alert('Specify folder name!')
         }
     })
 
@@ -149,7 +162,7 @@ addFolderAction.addEventListener('click', () => {
     formLeftName.type = 'text';
     formLeftName.placeholder = 'Folder Title...';
     formLeftName.maxLength = '20'
-    formLeftName.required = true
+    formLeftName.autocomplete = 'off'
     const formLeftAlias = document.createElement('textarea');
     formLeftAlias.id = 'form-left-alias';
     formLeftAlias.placeholder = 'Alias names...';
@@ -157,7 +170,7 @@ addFolderAction.addEventListener('click', () => {
     formLeftDescription.id = 'form-left-description';
     formLeftDescription.placeholder = 'Description...';
 
-    formLeft.append(formLeftName,formLeftAlias,formLeftDescription,saveDot);
+    formLeft.append(formLeftName,formLeftAlias,formLeftDescription);
 
     /* 2.form-right */
     const formRight = document.createElement('div');
@@ -340,9 +353,8 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             iconCloseDot.classList.add('fa','fa-close');
             closeDot.append(iconCloseDot);
         
-            const saveDot = document.createElement('button');
+            const saveDot = document.createElement('div');
             saveDot.classList.add('dot','save-dot');
-            saveDot.type = 'submit'
             const iconSaveDot = document.createElement('i');
             iconSaveDot.classList.add('fa','fa-save');
             saveDot.append(iconSaveDot);
@@ -353,7 +365,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             iconDeleteDot.classList.add('fa','fa-trash');
             deleteDot.append(iconDeleteDot);
         
-            overlay.append(closeDot,deleteDot);
+            overlay.append(closeDot,saveDot,deleteDot);
         
             closeDot.addEventListener('click',() => {
                 overlayShadow.innerHTML = '';
@@ -362,6 +374,18 @@ async function getAllData(keyword_value, direction_value, filter_value) {
         
             saveDot.addEventListener('click', async() => {
                 if (formLeftName.value !== '') {
+                    const body = { data_name : formLeftName.value, _id : folder.id}
+                    fetch("/namecheck",{
+                        method: "POST", 
+                        headers: { 'Content-Type': 'application/json'},
+                        body: JSON.stringify(body)
+                    })
+                    const response_none = await fetch("/namecheck")
+                    const response_text = await response_none.json()
+                    if (response_text.samename) {
+                        alert('File name already taken!')
+                        return
+                    }
                     const data_name = formLeftName.value;
                     const data_name_lc = data_name.toLowerCase()
                     const data_alias = formLeftAlias.value;
@@ -398,7 +422,9 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     }
                     getAllData(search_bar.value,direction_var,filter_value);   
                     overlayShadow.innerHTML = '';
-                    overlayShadow.remove();
+                    overlayShadow.remove();              
+                } else {
+                    alert('Specify folder name!')
                 }
             })
 
@@ -428,7 +454,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             formLeftName.type = 'text';
             formLeftName.placeholder = 'Folder Title...';
             formLeftName.maxLength = '20'
-            formLeftName.required = true
+            formLeftName.autocomplete = 'off'
             formLeftName.value = `${fmc_h4.textContent}`
             const formLeftAlias = document.createElement('textarea');
             formLeftAlias.id = 'form-left-alias';
@@ -439,7 +465,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             formLeftDescription.placeholder = 'Description...';
             formLeftDescription.value = `${icd_p.textContent}`
         
-            formLeft.append(formLeftName,formLeftAlias,formLeftDescription,saveDot);
+            formLeft.append(formLeftName,formLeftAlias,formLeftDescription);
         
             /* 2.form-right */
             const formRight = document.createElement('div');
@@ -679,7 +705,16 @@ async function getAllData(keyword_value, direction_value, filter_value) {
         const icd_label = document.createElement('label')
         icd_label.textContent = 'Description'
         const icd_p = document.createElement('p')
-        icd_p.textContent = `${item.data_description}`
+        
+        function urlify(text) {
+            const urlRegex = new RegExp(/(https?:\/\/[^\s]+)/g);
+            return text.replace(urlRegex, function(url) {
+                return '<a href="' + url + '">' + url + '</a>';
+            })
+        }
+        const urlifyed_text = urlify(item.data_description)
+
+        icd_p.innerHTML = `${urlifyed_text}`
         info_content_description.append(icd_label,icd_p)
 
         folder_info_description.appendChild(info_content_description)

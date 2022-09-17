@@ -237,3 +237,56 @@ app.post('/deletion', (request, response) => {
     }
     response.end();
 });
+
+let data_boolean = ''
+app.post("/namecheck", (req, res) => {
+    if (req.body._id) {
+        text_database.findOne({$and: [
+                { data_name: req.body.data_name },
+                { _id: req.body._id }
+            ]}, function(err, data){
+            if (err) {
+                response.end();
+                return; 
+            }
+            if (data !== null) {
+                data_boolean = false
+            } else {
+                text_database.findOne({ data_name: req.body.data_name }, function(err, data2){
+                    if (err) {
+                        response.end();
+                        return; 
+                    }
+                    if (data2 !== null) {
+                        data_boolean = true
+                    } else {
+                        data_boolean = false
+                    }
+                })
+            }
+        })
+    } else {
+        text_database.findOne({ data_name: req.body.data_name }, function(err, data){
+            if (err) {
+                response.end();
+                return; 
+            }
+            if (data !== null) {
+                data_boolean = true
+            } else {
+                data_boolean = false
+            }
+        })
+    }
+    res.end()
+})
+
+app.get("/namecheck", (req, res) => {
+    if (data_boolean) {
+        res.json({ samename : true });
+    } else {
+        res.json({ samename : false });
+    }
+    data_boolean = ''
+})
+
