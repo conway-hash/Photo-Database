@@ -302,11 +302,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
 
         const folder_main_cover = document.createElement('div')
         folder_main_cover.classList.add('folder-main-cover')
-        folder_main_cover.innerHTML = `
-            <div class="folder-main-cover-shadow">
-                <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
-            </div>
-        `
+        folder_main_cover.innerHTML = ``
 
         const folder_main_content = document.createElement('div')
         folder_main_content.classList.add('folder-main-content')
@@ -655,6 +651,22 @@ async function getAllData(keyword_value, direction_value, filter_value) {
         const response = await fetch('/fetchrecieve')
         const datarecieve = await response.json();
         
+        if (datarecieve[0].mimetype.includes('image')) {
+            folder_main_cover.innerHTML = `
+                <div class="folder-main-cover-shadow">
+                    <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
+                </div>
+                <img class='thumbnail' src="${datarecieve[0].path}" alt="${datarecieve[0].originalname}"
+                style="border-radius: 0px;">
+            `
+        } else {
+            folder_main_cover.innerHTML = `
+                <div class="folder-main-cover-shadow">
+                    <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
+                </div>
+            `
+        }
+
         let grid_index = 0
         datarecieve.forEach(file => {
             if (grid_index < 15) {

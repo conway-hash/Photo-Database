@@ -286,11 +286,14 @@ body {
     background: no-repeat center center/cover;
     border-radius: 15px 0px 0px 15px;
     overflow: hidden;
+    position: relative;
 }
 
 .folder-main-cover-shadow {
     height: 100%;
     width: 100%;
+    z-index: 1;
+    position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
