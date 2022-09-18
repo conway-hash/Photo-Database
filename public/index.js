@@ -237,7 +237,54 @@ addFolderAction.addEventListener('click', () => {
             const eye_icon = document.createElement('i')
             eye_icon.classList.add('fa','fa-eye')
             eye_icon.addEventListener('click', () => {
-                console.log('show image')
+                const overlay_show_shadow = document.createElement('div')
+                overlay_show_shadow.id = 'overlay-show-shadow'
+                const overlay_show = document.createElement('div')
+                overlay_show.id = 'overlay-show'
+
+                const closeDot = document.createElement('div');
+                closeDot.classList.add('dot','close-dot');
+                const iconCloseDot = document.createElement('i');
+                iconCloseDot.classList.add('fa','fa-close');
+                closeDot.append(iconCloseDot);
+                closeDot.addEventListener('click',() => {
+                    /* REMOVE EVENT LISTENERS */
+                    overlay_show_shadow.innerHTML = '';
+                    overlay_show_shadow.remove();
+                });
+
+                const leftArrowDot = document.createElement('div');
+                leftArrowDot.classList.add('dot','left-arrow-dot')
+                const iconLeftArrowDot = document.createElement('i');
+                iconLeftArrowDot.classList.add('fa','fa-chevron-left');
+                leftArrowDot.append(iconLeftArrowDot);
+                leftArrowDot.addEventListener('click',() => {
+                    console.log('left')
+                });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key == 'ArrowLeft') {
+                        console.log('left')
+                    }
+                })
+
+                const rightArrowDot = document.createElement('div');
+                rightArrowDot.classList.add('dot','right-arrow-dot')
+                const iconRightArrowDot = document.createElement('i');
+                iconRightArrowDot.classList.add('fa','fa-chevron-right');
+                rightArrowDot.append(iconRightArrowDot);
+                rightArrowDot.addEventListener('click',() => {
+                    console.log('right')
+                });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key == 'ArrowRight') {
+                        console.log('right')
+                    }
+                })
+
+                overlay_show.append(closeDot,leftArrowDot,rightArrowDot)
+
+                overlay_show_shadow.append(overlay_show)
+                document.body.append(overlay_show_shadow)
             })
             const file_overlay_name = document.createElement('p')
             file_overlay_name.classList.add('file-overlay-name')
@@ -565,7 +612,54 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                 const eye_icon = document.createElement('i')
                 eye_icon.classList.add('fa','fa-eye')
                 eye_icon.addEventListener('click', () => {
-                    console.log('show image')
+                    const overlay_show_shadow = document.createElement('div')
+                    overlay_show_shadow.id = 'overlay-show-shadow'
+                    const overlay_show = document.createElement('div')
+                    overlay_show.id = 'overlay-show'
+    
+                    const closeDot = document.createElement('div');
+                    closeDot.classList.add('dot','close-dot');
+                    const iconCloseDot = document.createElement('i');
+                    iconCloseDot.classList.add('fa','fa-close');
+                    closeDot.append(iconCloseDot);
+                    closeDot.addEventListener('click',() => {
+                        /* REMOVE EVENT LISTENERS */
+                        overlay_show_shadow.innerHTML = '';
+                        overlay_show_shadow.remove();
+                    });
+    
+                    const leftArrowDot = document.createElement('div');
+                    leftArrowDot.classList.add('dot','left-arrow-dot')
+                    const iconLeftArrowDot = document.createElement('i');
+                    iconLeftArrowDot.classList.add('fa','fa-chevron-left');
+                    leftArrowDot.append(iconLeftArrowDot);
+                    leftArrowDot.addEventListener('click',() => {
+                        console.log('left')
+                    });
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key == 'ArrowLeft') {
+                            console.log('left')
+                        }
+                    })
+    
+                    const rightArrowDot = document.createElement('div');
+                    rightArrowDot.classList.add('dot','right-arrow-dot')
+                    const iconRightArrowDot = document.createElement('i');
+                    iconRightArrowDot.classList.add('fa','fa-chevron-right');
+                    rightArrowDot.append(iconRightArrowDot);
+                    rightArrowDot.addEventListener('click',() => {
+                        console.log('right')
+                    });
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key == 'ArrowRight') {
+                            console.log('right')
+                        }
+                    })
+    
+                    overlay_show.append(closeDot,leftArrowDot,rightArrowDot)
+    
+                    overlay_show_shadow.append(overlay_show)
+                    document.body.append(overlay_show_shadow)
                 })
 
                 const file_overlay_name = document.createElement('p')
@@ -658,7 +752,54 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     const eye_icon = document.createElement('i')
                     eye_icon.classList.add('fa','fa-eye')
                     eye_icon.addEventListener('click', () => {
-                        console.log('show image')
+                        const overlay_show_shadow = document.createElement('div')
+                        overlay_show_shadow.id = 'overlay-show-shadow'
+                        const overlay_show = document.createElement('div')
+                        overlay_show.id = 'overlay-show'
+        
+                        const closeDot = document.createElement('div');
+                        closeDot.classList.add('dot','close-dot');
+                        const iconCloseDot = document.createElement('i');
+                        iconCloseDot.classList.add('fa','fa-close');
+                        closeDot.append(iconCloseDot);
+                        closeDot.addEventListener('click',() => {
+                            /* REMOVE EVENT LISTENERS */
+                            overlay_show_shadow.innerHTML = '';
+                            overlay_show_shadow.remove();
+                        });
+        
+                        const leftArrowDot = document.createElement('div');
+                        leftArrowDot.classList.add('dot','left-arrow-dot')
+                        const iconLeftArrowDot = document.createElement('i');
+                        iconLeftArrowDot.classList.add('fa','fa-chevron-left');
+                        leftArrowDot.append(iconLeftArrowDot);
+                        leftArrowDot.addEventListener('click',() => {
+                            console.log('left')
+                        });
+                        document.addEventListener('keydown', (e) => {
+                            if (e.key == 'ArrowLeft') {
+                                console.log('left')
+                            }
+                        })
+        
+                        const rightArrowDot = document.createElement('div');
+                        rightArrowDot.classList.add('dot','right-arrow-dot')
+                        const iconRightArrowDot = document.createElement('i');
+                        iconRightArrowDot.classList.add('fa','fa-chevron-right');
+                        rightArrowDot.append(iconRightArrowDot);
+                        rightArrowDot.addEventListener('click',() => {
+                            console.log('right')
+                        });
+                        document.addEventListener('keydown', (e) => {
+                            if (e.key == 'ArrowRight') {
+                                console.log('right')
+                            }
+                        })
+        
+                        overlay_show.append(closeDot,leftArrowDot,rightArrowDot)
+        
+                        overlay_show_shadow.append(overlay_show)
+                        document.body.append(overlay_show_shadow)
                     })
                     const file_overlay_name = document.createElement('p')
                     file_overlay_name.classList.add('file-overlay-name')
