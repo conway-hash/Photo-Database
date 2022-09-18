@@ -111,7 +111,7 @@ addFolderAction.addEventListener('click', () => {
     saveDot.addEventListener('click', async () => {
         if (formLeftName.value !== '') {
             const body = { data_name : formLeftName.value}
-            fetch("/namecheck",{
+            await fetch("/namecheck",{
                 method: "POST", 
                 headers: { 'Content-Type': 'application/json'},
                 body: JSON.stringify(body)
@@ -188,7 +188,8 @@ addFolderAction.addEventListener('click', () => {
 
     /* add multiple folders, add more folders afterwards, delete */
     const dt = new DataTransfer();
-    importField.addEventListener('change', () => {
+    importField.addEventListener('change', (e) => {
+        /*console.log(e.target.files[0].size)*/
         for(let i = 0; i < importField.files.length; i++){
             let form_right_grid_file = document.createElement('div')
             form_right_grid_file.classList.add('form-right-grid-file')
@@ -375,7 +376,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             saveDot.addEventListener('click', async() => {
                 if (formLeftName.value !== '') {
                     const body = { data_name : formLeftName.value, _id : folder.id}
-                    fetch("/namecheck",{
+                    await fetch("/namecheck",{
                         method: "POST", 
                         headers: { 'Content-Type': 'application/json'},
                         body: JSON.stringify(body)

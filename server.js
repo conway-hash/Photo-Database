@@ -240,7 +240,7 @@ app.post('/deletion', (request, response) => {
 
 let data_boolean = ''
 app.post("/namecheck", (req, res) => {
-    if (req.body._id) {
+    if (req.body._id !== undefined) {
         text_database.findOne({$and: [
                 { data_name: req.body.data_name },
                 { _id: req.body._id }
