@@ -136,7 +136,8 @@ app.post('/update', (request, response) => {
             data_alias_lc: data.data_alias.toLowerCase(),
             data_description: data.data_description,
             data_description_lc: data.data_description.toLowerCase(),
-            data_modified: data.data_modified
+            data_modified: data.data_modified,
+            data_main_image: data.data_main_image
         } },
         {}, 
         function (err, numReplaced) {

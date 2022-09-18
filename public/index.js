@@ -130,7 +130,8 @@ addFolderAction.addEventListener('click', () => {
             const data_description_lc = data_description.toLowerCase()
             const _id = String(Date.now());
             const data_modified = _id
-            const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description, data_description_lc, data_modified, _id};
+            const data_main_image = flag_image
+            const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description, data_description_lc, data_modified, data_main_image, _id};
             const data_content = {
                 method: 'POST',
                 headers: {
@@ -188,6 +189,7 @@ addFolderAction.addEventListener('click', () => {
 
     /* add multiple folders, add more folders afterwards, delete */
     const dt = new DataTransfer();
+    let flag_image = ''
     importField.addEventListener('change', (e) => {
         /*console.log(e.target.files[0].size)*/
         for(let i = 0; i < importField.files.length; i++){
@@ -207,6 +209,28 @@ addFolderAction.addEventListener('click', () => {
                     }
                 }
                 document.getElementById('import-field').files = dt.files;
+                if (flag_image === trash_icon.nextSibling.innerText) {
+                    flag_image = ''
+                }
+            })
+
+            const flag_icon = document.createElement('i')
+            flag_icon.classList.add("fa","fa-flag-o")
+            flag_icon.addEventListener('click', () => {
+                if (flag_icon.classList.contains('fa-flag-o')) {
+                    const flags = document.querySelectorAll('.fa-flag')
+                    for(let i = 0; i < flags.length; i++){
+                        flags[i].classList.remove('fa-flag')
+                        flags[i].classList.add('fa-flag-o')
+                    }
+                    flag_icon.classList.remove('fa-flag-o')
+                    flag_icon.classList.add('fa-flag')
+                    flag_image = flag_icon.nextSibling.nextSibling.innerText
+                } else {
+                    flag_icon.classList.remove('fa-flag')
+                    flag_icon.classList.add('fa-flag-o')
+                    flag_image = ''
+                }
             })
 
             const type = importField.files.item(i).type
@@ -218,15 +242,21 @@ addFolderAction.addEventListener('click', () => {
             const file_overlay_name = document.createElement('p')
             file_overlay_name.classList.add('file-overlay-name')
             file_overlay_name.innerHTML = `${importField.files.item(i).name}`
+            file_overlay.style.display = "none"
+            file_overlay.classList.add('file-overlay')
             
             form_right_grid_file.addEventListener('mouseenter', () => {
-                file_overlay.classList.add('file-overlay')
-                file_overlay.append(eye_icon,trash_icon,file_overlay_name)
+                file_overlay.style.display = "flex"
+                if (type.includes('image')) {
+                    file_overlay.append(eye_icon,flag_icon,trash_icon,file_overlay_name)
+                } else {
+                    file_overlay.append(eye_icon,trash_icon,file_overlay_name)
+                }
                 form_right_grid_file.appendChild(file_overlay)
             })
 
             form_right_grid_file.addEventListener('mouseleave', () => {
-                file_overlay.remove()
+                file_overlay.style.display = "none"
             })
 
             if(window.File && window.FileReader && window.FileList && window.Blob) {
@@ -294,6 +324,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
     for (item of data) {
         const folder = document.createElement('div')
         folder.classList.add('folder')
+        const current_item_data = item
         folder.id = item._id
 
         /* 1.folder_main */
@@ -391,7 +422,8 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     const data_description_lc = data_description.toLowerCase()
                     const data_modified = String(Date.now());
                     const _id = folder.id;
-                    const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description,  data_description_lc, data_modified, _id};
+                    const data_main_image = flag_image
+                    const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description,  data_description_lc, data_modified, data_main_image, _id};
                     const data_content = {
                         method: 'POST',
                         headers: {
@@ -487,8 +519,9 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             const datarecieve = await response.json();
 
             let delete_array = []
-            for(item of datarecieve){
-                let current_item = item
+            let current_item_main_image = current_item_data.data_main_image
+            for(current_data_item of datarecieve){
+                let current_item = current_data_item
                 let form_right_grid_file = document.createElement('div')
                 form_right_grid_file.classList.add('form-right-grid-file')
 
@@ -500,7 +533,34 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                 trash_icon.addEventListener('click', () => {
                     delete_array.push(current_item._id)
                     trash_icon.parentElement.parentElement.remove()
+                    if (flag_image === trash_icon.nextSibling.innerText) {
+                        flag_image = ''
+                    }
                 })
+
+                const flag_icon = document.createElement('i')
+                if (current_item.originalname === current_item_main_image) {
+                    flag_icon.classList.add("fa","fa-flag")
+                } else {
+                    flag_icon.classList.add("fa","fa-flag-o")
+                }
+
+                flag_icon.addEventListener('click', () => {
+                    if (flag_icon.classList.contains('fa-flag-o')) {
+                        const flags = document.querySelectorAll('.fa-flag')
+                        for(let i = 0; i < flags.length; i++){
+                            flags[i].classList.remove('fa-flag')
+                            flags[i].classList.add('fa-flag-o')
+                        }
+                        flag_icon.classList.remove('fa-flag-o')
+                        flag_icon.classList.add('fa-flag')
+                        flag_image = flag_icon.nextSibling.nextSibling.innerText
+                    } else {
+                        flag_icon.classList.remove('fa-flag')
+                        flag_icon.classList.add('fa-flag-o')
+                        flag_image = ''
+                    }
+                })             
 
                 const eye_icon = document.createElement('i')
                 eye_icon.classList.add('fa','fa-eye')
@@ -510,25 +570,32 @@ async function getAllData(keyword_value, direction_value, filter_value) {
 
                 const file_overlay_name = document.createElement('p')
                 file_overlay_name.classList.add('file-overlay-name')
-                file_overlay_name.innerHTML = `${item.originalname}`
+                file_overlay_name.innerHTML = `${current_data_item.originalname}`
+                file_overlay.style.display = 'none'
+                file_overlay.classList.add('file-overlay')
+
         
                 form_right_grid_file.addEventListener('mouseenter', () => {
-                    file_overlay.classList.add('file-overlay')
-                    file_overlay.append(eye_icon,trash_icon,file_overlay_name)
+                    file_overlay.style.display = "flex"
+                    if (current_item.mimetype.includes('image')) {
+                        file_overlay.append(eye_icon,flag_icon,trash_icon,file_overlay_name)
+                    } else {
+                        file_overlay.append(eye_icon,trash_icon,file_overlay_name)
+                    }
                     form_right_grid_file.appendChild(file_overlay)
                 })
 
                 form_right_grid_file.addEventListener('mouseleave', () => {
-                    file_overlay.remove()
+                    file_overlay.style.display = 'none'
                 })
 
-                if (item.mimetype.includes('image')){
+                if (current_data_item.mimetype.includes('image')){
                     form_right_grid_file.innerHTML = `
-                        <img class="thumbnail" src="${item.path}" loading="lazy" decoding="async" alt="${item.originalname}">
+                        <img class="thumbnail" src="${current_data_item.path}" loading="lazy" decoding="async" alt="${current_data_item.originalname}">
                     `
-                } else if (item.mimetype.includes('video')) {
+                } else if (current_data_item.mimetype.includes('video')) {
                     form_right_grid_file.innerHTML = `<i class="fa fa-file-movie-o"></i>`
-                } else if (item.mimetype.includes('audio')) {
+                } else if (current_data_item.mimetype.includes('audio')) {
                     form_right_grid_file.innerHTML = `<i class="fa fa-file-audio-o"></i>`
                 } else {
                     form_right_grid_file.innerHTML = `<i class="fa fa-file-o"></i>`
@@ -563,6 +630,28 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                             }
                         }
                         document.getElementById('import-field').files = dt.files;
+                        if (flag_image === trash_icon.nextSibling.innerText) {
+                            flag_image = ''
+                        }
+                    })
+
+                    const flag_icon = document.createElement('i')
+                    flag_icon.classList.add("fa","fa-flag-o")
+                    flag_icon.addEventListener('click', () => {
+                        if (flag_icon.classList.contains('fa-flag-o')) {
+                            const flags = document.querySelectorAll('.fa-flag')
+                            for(let i = 0; i < flags.length; i++){
+                                flags[i].classList.remove('fa-flag')
+                                flags[i].classList.add('fa-flag-o')
+                            }
+                            flag_icon.classList.remove('fa-flag-o')
+                            flag_icon.classList.add('fa-flag')
+                            flag_image = flag_icon.nextSibling.nextSibling.innerText
+                        } else {
+                            flag_icon.classList.remove('fa-flag')
+                            flag_icon.classList.add('fa-flag-o')
+                            flag_image = ''
+                        }
                     })
 
                     const type = importField.files.item(i).type
@@ -574,15 +663,21 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     const file_overlay_name = document.createElement('p')
                     file_overlay_name.classList.add('file-overlay-name')
                     file_overlay_name.innerHTML = `${importField.files.item(i).name}`
+                    file_overlay.style.display = 'none'
+                    file_overlay.classList.add('file-overlay')
             
                     form_right_grid_file.addEventListener('mouseenter', () => {
-                        file_overlay.classList.add('file-overlay')
-                        file_overlay.append(eye_icon,trash_icon,file_overlay_name)
+                        file_overlay.style.display = "flex"
+                        if (type.includes('image')) {
+                            file_overlay.append(eye_icon,flag_icon,trash_icon,file_overlay_name)
+                        } else {
+                            file_overlay.append(eye_icon,trash_icon,file_overlay_name)
+                        }
                         form_right_grid_file.appendChild(file_overlay)
                     })
 
                     form_right_grid_file.addEventListener('mouseleave', () => {
-                        file_overlay.remove()
+                        file_overlay.style.display = 'none'
                     })
 
                     if(window.File && window.FileReader && window.FileList && window.Blob) {
@@ -650,23 +745,40 @@ async function getAllData(keyword_value, direction_value, filter_value) {
 
         const response = await fetch('/fetchrecieve')
         const datarecieve = await response.json();
-        
-        if (datarecieve[0].mimetype.includes('image')) {
-            folder_main_cover.innerHTML = `
-                <div class="folder-main-cover-shadow">
-                    <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
-                </div>
-                <img class='thumbnail' src="${datarecieve[0].path}" alt="${datarecieve[0].originalname}"
-                style="border-radius: 0px;">
-            `
-        } else {
-            folder_main_cover.innerHTML = `
-                <div class="folder-main-cover-shadow">
-                    <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
-                </div>
-            `
-        }
 
+        if (item.data_main_image !== "") {
+            datarecieve.find(function(post, index) {
+                if(post.originalname == item.data_main_image) {
+                    folder_main_cover.innerHTML = `
+                        <div class="folder-main-cover-shadow">
+                            <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
+                        </div>
+                        <img class='thumbnail' src="${post.path}" alt="${post.originalname}"
+                        style="border-radius: 0px;">
+                    `
+                    return
+                }
+            });
+        } else {
+            if (datarecieve.length !== 0) {
+                if (datarecieve[0].mimetype.includes('image')) {
+                    folder_main_cover.innerHTML = `
+                        <div class="folder-main-cover-shadow">
+                            <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
+                        </div>
+                        <img class='thumbnail' src="${datarecieve[0].path}" alt="${datarecieve[0].originalname}"
+                        style="border-radius: 0px;">
+                    `
+                } else {
+                    folder_main_cover.innerHTML = `
+                        <div class="folder-main-cover-shadow">
+                            <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
+                        </div>
+                    `
+                }
+            }
+        }
+        
         let grid_index = 0
         datarecieve.forEach(file => {
             if (grid_index < 15) {
