@@ -1,14 +1,23 @@
-
-/*INITIAL-ADD-FILE---------------------------------------------------------------------------------------------------*/
-/* FILTER BURGER */
-const burger = document.querySelector('#burger')
-const direction = document.querySelector('#direction')
-const filterList = document.querySelector('#filter-list')
-const filters = document.querySelectorAll('.filter')
-const filterSelected = document.querySelector('#filter-selected')
+//SORTING
+//SORTING-SEARCH
 const search = document.querySelector('#search')
 const search_bar = document.querySelector('#search-bar')
+search_bar.addEventListener('keydown', (e) => {
+    if (e.key == 'Enter') {
+        search_bar.blur()
+        getAllData(search_bar.value,direction_var,filter_value)
+    }
+})
 
+search.addEventListener('click', () => {
+    getAllData(search_bar.value,direction_var,filter_value)
+})
+
+//SORTING-FILTER
+const burger = document.querySelector('#burger')
+const filterSelected = document.querySelector('#filter-selected')
+const filterList = document.querySelector('#filter-list')
+const filters = document.querySelectorAll('.filter')
 burger.addEventListener('click', () => {
     filterList.classList.toggle('shown')
     if (filterList.style.height !== filters.length * 50 + 'px') {
@@ -17,19 +26,6 @@ burger.addEventListener('click', () => {
     } else {
         filterList.style.height = '0px'
         direction.classList.remove('expanded')
-    }
-})
-
-let direction_var = -1
-direction.addEventListener('click', () => {
-    if (direction.className === 'fa fa-angle-down') {
-        direction.className = 'fa fa-angle-up'
-        direction_var = 1
-        getAllData(search_bar.value,direction_var,filter_value);
-    } else {
-        direction.className = 'fa fa-angle-down'
-        direction_var = -1
-        getAllData(search_bar.value,direction_var,filter_value);
     }
 })
 
@@ -47,38 +43,53 @@ filters.forEach(filter => {
     })
 })
 
-getAllData(search_bar.value,direction_var,filter_value);
-
-/* SORT SEARCH */
-search_bar.addEventListener('keydown', (e) => {
-    if (e.key == 'Enter') {
-        search_bar.blur()
-        getAllData(search_bar.value,direction_var,filter_value)
+//SORTING-DIRECTION
+const direction = document.querySelector('#direction')
+let direction_var = -1
+direction.addEventListener('click', () => {
+    if (direction.classList.contains('fa-angle-down')) {
+        direction.classList.remove('fa-angle-down')
+        direction.classList.remove('expanded')
+        direction.classList.add('fa-angle-up')
+        direction_var = 1
+        filterList.classList.remove('shown')
+        filterList.style.height = '0px'
+        getAllData(search_bar.value,direction_var,filter_value);
+    } else {
+        direction.classList.remove('fa-angle-up')
+        direction.classList.add('fa-angle-down')
+        direction.classList.remove('expanded')
+        direction_var = -1
+        filterList.classList.remove('shown')
+        filterList.style.height = '0px'
+        getAllData(search_bar.value,direction_var,filter_value);
     }
 })
+//FIRST INITIATION
+getAllData(search_bar.value,direction_var,filter_value);
 
-search.addEventListener('click', () => {
-    getAllData(search_bar.value,direction_var,filter_value)
-})
-
-/* ACTIONS */
+//ACTIONS
+//ACTIONS-REFRESH
 const refresh = document.querySelector('#refresh')
 refresh.addEventListener('click', () => {
     search_bar.value = ''
     direction.className = 'fa fa-angle-down'
+    direction.classList.remove('expanded')
     direction_var = -1
     filters.forEach(filter => {filter.classList.remove('selected')})
     document.querySelector('#date_u').classList.add('selected')
     filter_value = document.querySelector('.selected').id
     document.querySelector('#filter-selected').innerText = 'By date uploaded'
+    filterList.classList.remove('shown')
+    filterList.style.height = '0px'
     getAllData(search_bar.value,direction_var,filter_value);
-    refresh.children[0].classList.add('spin')
+    refresh.firstElementChild.classList.add('spin')
     setTimeout(function() {
-        refresh.children[0].classList.remove('spin')
+        refresh.firstElementChild.classList.remove('spin')
     },500)
 })
 
-/* 1.add-folder-overlay */
+//ACTIONS-ADDFOLDER
 const addFolderAction = document.querySelector('#add-folder');
 
 addFolderAction.addEventListener('click', () => {
@@ -193,7 +204,7 @@ addFolderAction.addEventListener('click', () => {
     importField.addEventListener('change', (e) => {
         /*console.log(e.target.files[0].size)*/
         for(let i = 0; i < importField.files.length; i++){
-            let form_right_grid_file = document.createElement('div')
+            const form_right_grid_file = document.createElement('div')
             form_right_grid_file.classList.add('form-right-grid-file')
 
             const file_overlay = document.createElement('div')
@@ -233,14 +244,68 @@ addFolderAction.addEventListener('click', () => {
                 }
             })
 
+            const index = i
             const type = importField.files.item(i).type
             const eye_icon = document.createElement('i')
             eye_icon.classList.add('fa','fa-eye')
             eye_icon.addEventListener('click', () => {
+                /*
+                const current_files = document.querySelectorAll('.form-right-grid-file')       
+                current_files.forEach((file,file_index) => {
+                    file.id = file_index
+                })
+                let leftrightIndex = eye_icon.parentElement.parentElement.id
+                */
+
                 const overlay_show_shadow = document.createElement('div')
                 overlay_show_shadow.id = 'overlay-show-shadow'
                 const overlay_show = document.createElement('div')
                 overlay_show.id = 'overlay-show'
+                const overlay_show_container = document.createElement('div')
+                overlay_show_container.id = 'overlay-show-container'
+                const overlay_show_content = document.createElement('div')
+                overlay_show_content.id = 'overlay-show-content'
+                const overlay_show_content_name = document.createElement('div')
+                overlay_show_content_name.id = "overlay-show-content-name"
+
+                let final_byte_size = ''
+                if (importField.files[index].size * 0.000001 > 1) {
+                    let byte_size = importField.files[index].size * 0.000001
+                    final_byte_size = byte_size.toFixed(2) + 'MB'
+                } else {
+                    let byte_size = importField.files[index].size * 0.001
+                    final_byte_size = byte_size.toFixed(2) + 'KB'
+                }
+
+                if(window.File && window.FileReader && window.FileList && window.Blob) {
+                    const reader = new FileReader()
+                    reader.addEventListener('load', (event) => {
+                        if (type.includes('image')){
+                            overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                            overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                        } else if (type.includes('video')) {
+                            overlay_show_content.innerHTML = `
+                            <video class="overlay-show-content" controls autoplay>
+                                <source src="${event.target.result}" type="${type}" />
+                            </video>
+                            `
+                            overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                        } else if (type.includes('audio')) {
+                            overlay_show_content.innerHTML = `
+                            <audio controls autoplay>
+                                <source src="${event.target.result}" type="${type}" />
+                            </audio>
+                            `
+                            overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                        } else {
+                            overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                            overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                        }
+                    })
+                    reader.readAsDataURL(importField.files[index])
+                } else {
+                    alert('Your browser does not spport File API')
+                }
 
                 const closeDot = document.createElement('div');
                 closeDot.classList.add('dot','close-dot');
@@ -252,36 +317,96 @@ addFolderAction.addEventListener('click', () => {
                     overlay_show_shadow.innerHTML = '';
                     overlay_show_shadow.remove();
                 });
-
+                /*
                 const leftArrowDot = document.createElement('div');
                 leftArrowDot.classList.add('dot','left-arrow-dot')
                 const iconLeftArrowDot = document.createElement('i');
                 iconLeftArrowDot.classList.add('fa','fa-chevron-left');
                 leftArrowDot.append(iconLeftArrowDot);
                 leftArrowDot.addEventListener('click',() => {
-                    console.log('left')
+                    leftrightIndex --
+                    if (leftrightIndex < 0) {
+                        leftrightIndex = importField.files.length - 1
+                    }
+                    if(window.File && window.FileReader && window.FileList && window.Blob) {
+                        const reader = new FileReader()
+                        reader.addEventListener('load', (event) => {
+                            if (importField.files.item(leftrightIndex).type.includes('image')){
+                                overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                            } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                overlay_show_content.innerHTML = `
+                                <video class="overlay-show-content" controls autoplay>
+                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                </video>
+                                `
+                            } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                overlay_show_content.innerHTML = `
+                                <audio controls autoplay>
+                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                </audio>
+                                `
+                            } else {
+                                overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                            }
+                        })
+                        reader.readAsDataURL(importField.files[leftrightIndex])
+                    } else {
+                        alert('Your browser does not spport File API')
+                    }
                 });
+                /*
                 document.addEventListener('keydown', (e) => {
                     if (e.key == 'ArrowLeft') {
                         console.log('left')
                     }
                 })
-
+                */
+                /*
                 const rightArrowDot = document.createElement('div');
                 rightArrowDot.classList.add('dot','right-arrow-dot')
                 const iconRightArrowDot = document.createElement('i');
                 iconRightArrowDot.classList.add('fa','fa-chevron-right');
                 rightArrowDot.append(iconRightArrowDot);
                 rightArrowDot.addEventListener('click',() => {
-                    console.log('right')
+                    leftrightIndex ++
+                    if (leftrightIndex > importField.files.length - 1) {
+                        leftrightIndex = 0
+                    }
+                    if(window.File && window.FileReader && window.FileList && window.Blob) {
+                        const reader = new FileReader()
+                        reader.addEventListener('load', (event) => {
+                            if (importField.files.item(leftrightIndex).type.includes('image')){
+                                overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                            } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                overlay_show_content.innerHTML = `
+                                <video class="overlay-show-content" controls autoplay>
+                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                </video>
+                                `
+                            } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                overlay_show_content.innerHTML = `
+                                <audio controls autoplay>
+                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                </audio>
+                                `
+                            } else {
+                                overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                            }
+                        })
+                        reader.readAsDataURL(importField.files[leftrightIndex])
+                    } else {
+                        alert('Your browser does not spport File API')
+                    }
                 });
+                /*
                 document.addEventListener('keydown', (e) => {
                     if (e.key == 'ArrowRight') {
                         console.log('right')
                     }
                 })
-
-                overlay_show.append(closeDot,leftArrowDot,rightArrowDot)
+                */
+                overlay_show_container.append(overlay_show_content,overlay_show_content_name)
+                overlay_show.append(closeDot,/*leftArrowDot,rightArrowDot,*/overlay_show_container)
 
                 overlay_show_shadow.append(overlay_show)
                 document.body.append(overlay_show_shadow)
@@ -323,15 +448,6 @@ addFolderAction.addEventListener('click', () => {
                 formRightGrid.appendChild(form_right_grid_file)
             } else {
                 alert('Your browser does not spport File API')
-                if (type.includes('image')){
-                    form_right_grid_file.innerHTML = `<i class="fa fa-file-photo-o"></i>`
-                } else if (type.includes('video')) {
-                    form_right_grid_file.innerHTML = `<i class="fa fa-file-movie-o"></i>`
-                } else if (type.includes('audio')) {
-                    form_right_grid_file.innerHTML = `<i class="fa fa-file-audio-o"></i>`
-                } else {
-                    form_right_grid_file.innerHTML = `<i class="fa fa-file-o"></i>`
-                }
             }
         };
 
@@ -567,9 +683,10 @@ async function getAllData(keyword_value, direction_value, filter_value) {
 
             let delete_array = []
             let current_item_main_image = current_item_data.data_main_image
+            let flag_image = current_item_main_image
             for(current_data_item of datarecieve){
                 let current_item = current_data_item
-                let form_right_grid_file = document.createElement('div')
+                const form_right_grid_file = document.createElement('div')
                 form_right_grid_file.classList.add('form-right-grid-file')
 
                 const file_overlay = document.createElement('div')
@@ -580,6 +697,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                 trash_icon.addEventListener('click', () => {
                     delete_array.push(current_item._id)
                     trash_icon.parentElement.parentElement.remove()
+
                     if (flag_image === trash_icon.nextSibling.innerText) {
                         flag_image = ''
                     }
@@ -612,10 +730,56 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                 const eye_icon = document.createElement('i')
                 eye_icon.classList.add('fa','fa-eye')
                 eye_icon.addEventListener('click', () => {
+                    /*
+                    const current_files = document.querySelectorAll('.form-right-grid-file')       
+                    current_files.forEach((file,file_index) => {
+                        file.id = file_index
+                    })
+                    */
+                    //let leftrightIndex = eye_icon.parentElement.parentElement.id
+    
                     const overlay_show_shadow = document.createElement('div')
                     overlay_show_shadow.id = 'overlay-show-shadow'
                     const overlay_show = document.createElement('div')
                     overlay_show.id = 'overlay-show'
+                    const overlay_show_container = document.createElement('div')
+                    overlay_show_container.id = 'overlay-show-container'
+                    const overlay_show_content = document.createElement('div')
+                    overlay_show_content.id = 'overlay-show-content'
+                    const overlay_show_content_name = document.createElement('div')
+                    overlay_show_content_name.id = "overlay-show-content-name"
+
+                    let final_byte_size = ''
+                    if (current_item.size * 0.000001 > 1) {
+                        let byte_size = current_item.size * 0.000001
+                        final_byte_size = byte_size.toFixed(2) + 'MB'
+                    } else {
+                        let byte_size = current_item.size * 0.001
+                        final_byte_size = byte_size.toFixed(2) + 'KB'
+                    }
+
+                    if (current_item.mimetype.includes('image')){
+                        overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${current_item.path}" loading="lazy" decoding="async">`
+                        overlay_show_content_name.innerHTML = `${current_item.originalname} ${final_byte_size}`
+                    } else if (current_item.mimetype.includes('video')) {
+                        overlay_show_content.innerHTML = `
+                        <video class="overlay-show-content" controls autoplay>
+                            <source src="${current_item.path}" type="${current_item.mimetype}" />
+                        </video>
+                        `
+                        overlay_show_content_name.innerHTML = `${current_item.originalname} ${final_byte_size}`
+                    } else if (current_item.mimetype.includes('audio')) {
+                        overlay_show_content.innerHTML = `
+                        <audio controls autoplay>
+                            <source src="${current_item.path}" type="${current_item.mimetype}" />
+                        </audio>
+                        `
+                        overlay_show_content_name.innerHTML = `${current_item.originalname} ${final_byte_size}`
+                    } else {
+                        overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                        overlay_show_content_name.innerHTML = `${current_item.originalname} ${final_byte_size}`
+                    }
+
     
                     const closeDot = document.createElement('div');
                     closeDot.classList.add('dot','close-dot');
@@ -627,36 +791,282 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         overlay_show_shadow.innerHTML = '';
                         overlay_show_shadow.remove();
                     });
-    
+                    /*
+                    console.log(datarecieve[leftrightIndex]._id)
+                    let datarecievemode = true
                     const leftArrowDot = document.createElement('div');
                     leftArrowDot.classList.add('dot','left-arrow-dot')
                     const iconLeftArrowDot = document.createElement('i');
                     iconLeftArrowDot.classList.add('fa','fa-chevron-left');
                     leftArrowDot.append(iconLeftArrowDot);
                     leftArrowDot.addEventListener('click',() => {
-                        console.log('left')
+                        leftrightIndex --
+                        if (datarecievemode === false) {
+                            if (leftrightIndex < 0) {
+                                datarecievemode = true
+                                leftrightIndex = datarecieve.length - 1 - delete_array.length
+                                if (datarecieve[leftrightIndex].mimetype.includes('image')){
+                                    overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${datarecieve[leftrightIndex].path}" loading="lazy" decoding="async">`
+                                } else if (datarecieve[leftrightIndex].mimetype.includes('video')) {
+                                    overlay_show_content.innerHTML = `
+                                    <video class="overlay-show-content" controls autoplay>
+                                        <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                    </video>
+                                    `
+                                } else if (datarecieve[leftrightIndex].mimetype.includes('audio')) {
+                                    overlay_show_content.innerHTML = `
+                                    <audio controls autoplay>
+                                        <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                    </audio>
+                                    `
+                                } else {
+                                    overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                }
+                            } else {
+                                if(window.File && window.FileReader && window.FileList && window.Blob) {
+                                    const reader = new FileReader()
+                                    reader.addEventListener('load', (event) => {
+                                        if (importField.files.item(leftrightIndex).type.includes('image')){
+                                            overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                                        } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                            overlay_show_content.innerHTML = `
+                                            <video class="overlay-show-content" controls autoplay>
+                                                <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                            </video>
+                                            `
+                                        } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                            overlay_show_content.innerHTML = `
+                                            <audio controls autoplay>
+                                                <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                            </audio>
+                                            `
+                                        } else {
+                                            overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                        }
+                                    })
+                                    reader.readAsDataURL(importField.files[leftrightIndex])
+                                }
+                            }
+                        } else {
+                            if (leftrightIndex < 0) {
+                                if (importField.files.length > 0) {
+                                    datarecievemode = false
+                                    leftrightIndex = importField.files.length - 1
+                                    if(window.File && window.FileReader && window.FileList && window.Blob) {
+                                        const reader = new FileReader()
+                                        reader.addEventListener('load', (event) => {
+                                            if (importField.files.item(leftrightIndex).type.includes('image')){
+                                                overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                                            } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                                overlay_show_content.innerHTML = `
+                                                <video class="overlay-show-content" controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </video>
+                                                `
+                                            } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                                overlay_show_content.innerHTML = `
+                                                <audio controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </audio>
+                                                `
+                                            } else {
+                                                overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                            } 
+                                        })
+                                        reader.readAsDataURL(importField.files[leftrightIndex])
+                                    }  
+                                } else {
+                                    leftrightIndex = datarecieve.length - 1 - delete_array.length
+                                    if (datarecieve[leftrightIndex].mimetype.includes('image')){
+                                        overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${datarecieve[leftrightIndex].path}" loading="lazy" decoding="async">`
+                                    } else if (datarecieve[leftrightIndex].mimetype.includes('video')) {
+                                        overlay_show_content.innerHTML = `
+                                        <video class="overlay-show-content" controls autoplay>
+                                            <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                        </video>
+                                        `
+                                    } else if (datarecieve[leftrightIndex].mimetype.includes('audio')) {
+                                        overlay_show_content.innerHTML = `
+                                        <audio controls autoplay>
+                                            <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                        </audio>
+                                        `
+                                    } else {
+                                        overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                    }
+                                }            
+                            } else {
+                                if (datarecieve[leftrightIndex].mimetype.includes('image')){
+                                    overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${datarecieve[leftrightIndex].path}" loading="lazy" decoding="async">`
+                                } else if (datarecieve[leftrightIndex].mimetype.includes('video')) {
+                                    overlay_show_content.innerHTML = `
+                                    <video class="overlay-show-content" controls autoplay>
+                                        <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                    </video>
+                                    `
+                                } else if (datarecieve[leftrightIndex].mimetype.includes('audio')) {
+                                    overlay_show_content.innerHTML = `
+                                    <audio controls autoplay>
+                                        <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                    </audio>
+                                    `
+                                } else {
+                                    overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                }
+                            }
+                        }
                     });
+                    /*
                     document.addEventListener('keydown', (e) => {
                         if (e.key == 'ArrowLeft') {
                             console.log('left')
                         }
                     })
-    
+                    */
+                   /*
                     const rightArrowDot = document.createElement('div');
                     rightArrowDot.classList.add('dot','right-arrow-dot')
                     const iconRightArrowDot = document.createElement('i');
                     iconRightArrowDot.classList.add('fa','fa-chevron-right');
                     rightArrowDot.append(iconRightArrowDot);
                     rightArrowDot.addEventListener('click',() => {
-                        console.log('right')
+                        leftrightIndex ++
+                        if (datarecievemode === false) {
+                            if (leftrightIndex > importField.files.length - 1) {
+                                datarecievemode = true
+                                leftrightIndex = 0
+                                if (datarecieve[leftrightIndex].mimetype.includes('image')){
+                                    overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${datarecieve[leftrightIndex].path}" loading="lazy" decoding="async">`
+                                } else if (datarecieve[leftrightIndex].mimetype.includes('video')) {
+                                    overlay_show_content.innerHTML = `
+                                    <video class="overlay-show-content" controls autoplay>
+                                        <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                    </video>
+                                    `
+                                } else if (datarecieve[leftrightIndex].mimetype.includes('audio')) {
+                                    overlay_show_content.innerHTML = `
+                                    <audio controls autoplay>
+                                        <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                    </audio>
+                                    `
+                                } else {
+                                    overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                }
+                            } else {
+                                if(window.File && window.FileReader && window.FileList && window.Blob) {
+                                    const reader = new FileReader()
+                                    reader.addEventListener('load', (event) => {
+                                        if (importField.files.item(leftrightIndex).type.includes('image')){
+                                            overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                                        } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                            overlay_show_content.innerHTML = `
+                                            <video class="overlay-show-content" controls autoplay>
+                                                <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                            </video>
+                                            `
+                                        } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                            overlay_show_content.innerHTML = `
+                                            <audio controls autoplay>
+                                                <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                            </audio>
+                                            `
+                                        } else {
+                                            overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                        }
+                                    })
+                                    reader.readAsDataURL(importField.files[leftrightIndex])
+                                }
+                            }
+                        } else {
+                            if (leftrightIndex > datarecieve.length - 1 - delete_array.length) {
+                                if (importField.files.length > 0) {
+                                    datarecievemode = false
+                                    leftrightIndex = 0
+                                    if(window.File && window.FileReader && window.FileList && window.Blob) {
+                                        const reader = new FileReader()
+                                        reader.addEventListener('load', (event) => {
+                                            if (importField.files.item(leftrightIndex).type.includes('image')){
+                                                overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                                            } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                                overlay_show_content.innerHTML = `
+                                                <video class="overlay-show-content" controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </video>
+                                                `
+                                            } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                                overlay_show_content.innerHTML = `
+                                                <audio controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </audio>
+                                                `
+                                            } else {
+                                                overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                            } 
+                                        })
+                                        reader.readAsDataURL(importField.files[leftrightIndex])
+                                    }
+                                } else {
+                                    leftrightIndex = 0
+                                    if (datarecieve[leftrightIndex].mimetype.includes('image')){
+                                        overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${datarecieve[leftrightIndex].path}" loading="lazy" decoding="async">`
+                                    } else if (datarecieve[leftrightIndex].mimetype.includes('video')) {
+                                        overlay_show_content.innerHTML = `
+                                        <video class="overlay-show-content" controls autoplay>
+                                            <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                        </video>
+                                        `
+                                    } else if (datarecieve[leftrightIndex].mimetype.includes('audio')) {
+                                        overlay_show_content.innerHTML = `
+                                        <audio controls autoplay>
+                                            <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                        </audio>
+                                        `
+                                    } else {
+                                        overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                    }
+                                }                            
+                            } else {
+                                if (delete_array.length > 0) {                    
+                                    delete_array.forEach((delete_array_file) => {
+                                        if (datarecieve[leftrightIndex]._id.includes(delete_array_file)) {
+                                            leftrightIndex ++
+                                        }
+                                        console.log(delete_array_file)
+                                    })
+                                }
+                                console.log(datarecieve[leftrightIndex]._id)
+                                console.log(leftrightIndex)
+                            
+                                if (datarecieve[leftrightIndex].mimetype.includes('image')){
+                                    overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${datarecieve[leftrightIndex].path}" loading="lazy" decoding="async">`
+                                } else if (datarecieve[leftrightIndex].mimetype.includes('video')) {
+                                    overlay_show_content.innerHTML = `
+                                    <video class="overlay-show-content" controls autoplay>
+                                        <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                    </video>
+                                    `
+                                } else if (datarecieve[leftrightIndex].mimetype.includes('audio')) {
+                                    overlay_show_content.innerHTML = `
+                                    <audio controls autoplay>
+                                        <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                    </audio>
+                                    `
+                                } else {
+                                    overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                }
+                                
+                            }
+                        }
                     });
+                    /*
                     document.addEventListener('keydown', (e) => {
                         if (e.key == 'ArrowRight') {
                             console.log('right')
                         }
                     })
-    
-                    overlay_show.append(closeDot,leftArrowDot,rightArrowDot)
+                    */
+                    overlay_show_container.append(overlay_show_content,overlay_show_content_name)
+                    overlay_show.append(closeDot,/*leftArrowDot,rightArrowDot,*/overlay_show_container)
     
                     overlay_show_shadow.append(overlay_show)
                     document.body.append(overlay_show_shadow)
@@ -708,7 +1118,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             const dt = new DataTransfer();
             importField.addEventListener('change', () => {
                 for(let i = 0; i < importField.files.length; i++){
-                    let form_right_grid_file = document.createElement('div')
+                    const form_right_grid_file = document.createElement('div')
                     form_right_grid_file.classList.add('form-right-grid-file')
 
                     const file_overlay = document.createElement('div')
@@ -748,14 +1158,69 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         }
                     })
 
+                    const index = i
                     const type = importField.files.item(i).type
                     const eye_icon = document.createElement('i')
                     eye_icon.classList.add('fa','fa-eye')
                     eye_icon.addEventListener('click', () => {
+                        console.log(importField.files[index])
+                        /*
+                        const current_files = document.querySelectorAll('.form-right-grid-file')       
+                        current_files.forEach((file,file_index) => {
+                            file.id = file_index
+                        })
+                        */
+                        //let leftrightIndex = eye_icon.parentElement.parentElement.id - datarecieve.length - delete_array.length
+        
                         const overlay_show_shadow = document.createElement('div')
                         overlay_show_shadow.id = 'overlay-show-shadow'
                         const overlay_show = document.createElement('div')
                         overlay_show.id = 'overlay-show'
+                        const overlay_show_container = document.createElement('div')
+                        overlay_show_container.id = 'overlay-show-container'
+                        const overlay_show_content = document.createElement('div')
+                        overlay_show_content.id = 'overlay-show-content'
+                        const overlay_show_content_name = document.createElement('div')
+                        overlay_show_content_name.id = "overlay-show-content-name"
+
+                        let final_byte_size = ''
+                        if (importField.files[index].size * 0.000001 > 1) {
+                            let byte_size = importField.files[index].size * 0.000001
+                            final_byte_size = byte_size.toFixed(2) + 'MB'
+                        } else {
+                            let byte_size = importField.files[index].size * 0.001
+                            final_byte_size = byte_size.toFixed(2) + 'KB'
+                        }
+
+                        if(window.File && window.FileReader && window.FileList && window.Blob) {
+                            const reader = new FileReader()
+                            reader.addEventListener('load', (event) => {
+                                if (type.includes('image')){
+                                    overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                                    overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                                } else if (type.includes('video')) {
+                                    overlay_show_content.innerHTML = `
+                                    <video class="overlay-show-content" controls autoplay>
+                                        <source src="${event.target.result}" type="${type}" />
+                                    </video>
+                                    `
+                                    overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                                } else if (type.includes('audio')) {
+                                    overlay_show_content.innerHTML = `
+                                    <audio controls autoplay>
+                                        <source src="${event.target.result}" type="${type}" />
+                                    </audio>
+                                    `
+                                    overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                                } else {
+                                    overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                    overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                                }
+                            })
+                            reader.readAsDataURL(importField.files[index])
+                        } else {
+                            alert('Your browser does not spport File API')
+                        }
         
                         const closeDot = document.createElement('div');
                         closeDot.classList.add('dot','close-dot');
@@ -767,36 +1232,294 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                             overlay_show_shadow.innerHTML = '';
                             overlay_show_shadow.remove();
                         });
-        
+                        /*
                         const leftArrowDot = document.createElement('div');
                         leftArrowDot.classList.add('dot','left-arrow-dot')
                         const iconLeftArrowDot = document.createElement('i');
                         iconLeftArrowDot.classList.add('fa','fa-chevron-left');
                         leftArrowDot.append(iconLeftArrowDot);
+                        let datarecievemode = false
                         leftArrowDot.addEventListener('click',() => {
-                            console.log('left')
+                            leftrightIndex --
+                            if (datarecievemode) {
+                                if (leftrightIndex < 0) {
+                                    datarecievemode = false
+                                    leftrightIndex = importField.files.length - 1
+                                    if(window.File && window.FileReader && window.FileList && window.Blob) {
+                                        const reader = new FileReader()
+                                        reader.addEventListener('load', (event) => {
+                                            if (importField.files.item(leftrightIndex).type.includes('image')){
+                                                overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                                            } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                                overlay_show_content.innerHTML = `
+                                                <video class="overlay-show-content" controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </video>
+                                                `
+                                            } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                                overlay_show_content.innerHTML = `
+                                                <audio controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </audio>
+                                                `
+                                            } else {
+                                                overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                            }
+                                        })
+                                        reader.readAsDataURL(importField.files[leftrightIndex])
+                                    } else {
+                                        alert('Your browser does not spport File API')
+                                    }
+                                } else {
+                                    if (datarecieve[leftrightIndex].mimetype.includes('image')){
+                                        overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${datarecieve[leftrightIndex].path}" loading="lazy" decoding="async">`
+                                    } else if (datarecieve[leftrightIndex].mimetype.includes('video')) {
+                                        overlay_show_content.innerHTML = `
+                                        <video class="overlay-show-content" controls autoplay>
+                                            <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                        </video>
+                                        `
+                                    } else if (datarecieve[leftrightIndex].mimetype.includes('audio')) {
+                                        overlay_show_content.innerHTML = `
+                                        <audio controls autoplay>
+                                            <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                        </audio>
+                                        `
+                                    } else {
+                                        overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                    }
+                                }
+                            } else {
+                                if (leftrightIndex < 0) {
+                                    if (datarecieve.length > 0) {
+                                        datarecievemode = true
+                                        leftrightIndex = datarecieve.length - 1 - delete_array.length
+                                        if (datarecieve[leftrightIndex].mimetype.includes('image')){
+                                            overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${datarecieve[leftrightIndex].path}" loading="lazy" decoding="async">`
+                                        } else if (datarecieve[leftrightIndex].mimetype.includes('video')) {
+                                            overlay_show_content.innerHTML = `
+                                            <video class="overlay-show-content" controls autoplay>
+                                                <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                            </video>
+                                            `
+                                        } else if (datarecieve[leftrightIndex].mimetype.includes('audio')) {
+                                            overlay_show_content.innerHTML = `
+                                            <audio controls autoplay>
+                                                <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                            </audio>
+                                            `
+                                        } else {
+                                            overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                        }
+                                    } else {
+                                        leftrightIndex = importField.files.length - 1
+                                        if(window.File && window.FileReader && window.FileList && window.Blob) {
+                                            const reader = new FileReader()
+                                            reader.addEventListener('load', (event) => {
+                                                if (importField.files.item(leftrightIndex).type.includes('image')){
+                                                    overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                                                } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                                    overlay_show_content.innerHTML = `
+                                                    <video class="overlay-show-content" controls autoplay>
+                                                        <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                    </video>
+                                                    `
+                                                } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                                    overlay_show_content.innerHTML = `
+                                                    <audio controls autoplay>
+                                                        <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                    </audio>
+                                                    `
+                                                } else {
+                                                    overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                                }
+                                            })
+                                            reader.readAsDataURL(importField.files[leftrightIndex])
+                                        } else {
+                                            alert('Your browser does not spport File API')
+                                        }
+                                    }
+                                } else {
+                                    if(window.File && window.FileReader && window.FileList && window.Blob) {
+                                        const reader = new FileReader()
+                                        reader.addEventListener('load', (event) => {
+                                            if (importField.files.item(leftrightIndex).type.includes('image')){
+                                                overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                                            } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                                overlay_show_content.innerHTML = `
+                                                <video class="overlay-show-content" controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </video>
+                                                `
+                                            } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                                overlay_show_content.innerHTML = `
+                                                <audio controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </audio>
+                                                `
+                                            } else {
+                                                overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                            }
+                                        })
+                                        reader.readAsDataURL(importField.files[leftrightIndex])
+                                    } else {
+                                        alert('Your browser does not spport File API')
+                                    }
+                                }
+                            }
+
                         });
+                        /*
                         document.addEventListener('keydown', (e) => {
                             if (e.key == 'ArrowLeft') {
                                 console.log('left')
                             }
                         })
-        
+                        */
+                       /*
                         const rightArrowDot = document.createElement('div');
                         rightArrowDot.classList.add('dot','right-arrow-dot')
                         const iconRightArrowDot = document.createElement('i');
                         iconRightArrowDot.classList.add('fa','fa-chevron-right');
                         rightArrowDot.append(iconRightArrowDot);
                         rightArrowDot.addEventListener('click',() => {
-                            console.log('right')
+                            leftrightIndex ++
+                            if (datarecievemode) {
+                                if (leftrightIndex > datarecieve.length - delete_array.length) {
+                                    datarecievemode = false
+                                    leftrightIndex = 0
+                                    if(window.File && window.FileReader && window.FileList && window.Blob) {
+                                        const reader = new FileReader()
+                                        reader.addEventListener('load', (event) => {
+                                            if (importField.files.item(leftrightIndex).type.includes('image')){
+                                                overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                                            } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                                overlay_show_content.innerHTML = `
+                                                <video class="overlay-show-content" controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </video>
+                                                `
+                                            } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                                overlay_show_content.innerHTML = `
+                                                <audio controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </audio>
+                                                `
+                                            } else {
+                                                overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                            }
+                                        })
+                                        reader.readAsDataURL(importField.files[leftrightIndex])
+                                    } else {
+                                        alert('Your browser does not spport File API')
+                                    }
+                                } else {
+                                    if (datarecieve[leftrightIndex].mimetype.includes('image')){
+                                        overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${datarecieve[leftrightIndex].path}" loading="lazy" decoding="async">`
+                                    } else if (datarecieve[leftrightIndex].mimetype.includes('video')) {
+                                        overlay_show_content.innerHTML = `
+                                        <video class="overlay-show-content" controls autoplay>
+                                            <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                        </video>
+                                        `
+                                    } else if (datarecieve[leftrightIndex].mimetype.includes('audio')) {
+                                        overlay_show_content.innerHTML = `
+                                        <audio controls autoplay>
+                                            <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                        </audio>
+                                        `
+                                    } else {
+                                        overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                    }
+                                }
+                            } else {
+                                if (leftrightIndex > importField.files.length - 1) {
+                                    if (datarecieve.length > 0) {
+                                        datarecievemode = true
+                                        leftrightIndex = 0
+                                        if (datarecieve[leftrightIndex].mimetype.includes('image')){
+                                            overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${datarecieve[leftrightIndex].path}" loading="lazy" decoding="async">`
+                                        } else if (datarecieve[leftrightIndex].mimetype.includes('video')) {
+                                            overlay_show_content.innerHTML = `
+                                            <video class="overlay-show-content" controls autoplay>
+                                                <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                            </video>
+                                            `
+                                        } else if (datarecieve[leftrightIndex].mimetype.includes('audio')) {
+                                            overlay_show_content.innerHTML = `
+                                            <audio controls autoplay>
+                                                <source src="${datarecieve[leftrightIndex].path}" type="${datarecieve[leftrightIndex].mimetype}" />
+                                            </audio>
+                                            `
+                                        } else {
+                                            overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                        }
+                                    } else {
+                                        leftrightIndex = importField.files.length - 1
+                                        if(window.File && window.FileReader && window.FileList && window.Blob) {
+                                            const reader = new FileReader()
+                                            reader.addEventListener('load', (event) => {
+                                                if (importField.files.item(leftrightIndex).type.includes('image')){
+                                                    overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                                                } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                                    overlay_show_content.innerHTML = `
+                                                    <video class="overlay-show-content" controls autoplay>
+                                                        <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                    </video>
+                                                    `
+                                                } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                                    overlay_show_content.innerHTML = `
+                                                    <audio controls autoplay>
+                                                        <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                    </audio>
+                                                    `
+                                                } else {
+                                                    overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                                }
+                                            })
+                                            reader.readAsDataURL(importField.files[leftrightIndex])
+                                        } else {
+                                            alert('Your browser does not spport File API')
+                                        }
+                                    }
+                                } else {
+                                    if(window.File && window.FileReader && window.FileList && window.Blob) {
+                                        const reader = new FileReader()
+                                        reader.addEventListener('load', (event) => {
+                                            if (importField.files.item(leftrightIndex).type.includes('image')){
+                                                overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
+                                            } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                                overlay_show_content.innerHTML = `
+                                                <video class="overlay-show-content" controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </video>
+                                                `
+                                            } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                                overlay_show_content.innerHTML = `
+                                                <audio controls autoplay>
+                                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                                </audio>
+                                                `
+                                            } else {
+                                                overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                            }
+                                        })
+                                        reader.readAsDataURL(importField.files[leftrightIndex])
+                                    } else {
+                                        alert('Your browser does not spport File API')
+                                    }
+                                }
+                            }
                         });
+                        /*
                         document.addEventListener('keydown', (e) => {
                             if (e.key == 'ArrowRight') {
                                 console.log('right')
                             }
                         })
-        
-                        overlay_show.append(closeDot,leftArrowDot,rightArrowDot)
+                        */
+                        overlay_show_container.append(overlay_show_content,overlay_show_content_name)
+                        overlay_show.append(closeDot,/*leftArrowDot,rightArrowDot,*/overlay_show_container)
         
                         overlay_show_shadow.append(overlay_show)
                         document.body.append(overlay_show_shadow)
@@ -838,16 +1561,6 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         formRightGrid.appendChild(form_right_grid_file)
                     } else {
                         alert('Your browser does not spport File API')
-                        if (type.includes('image')){
-                            form_right_grid_file.innerHTML = `<i class="fa fa-file-photo-o"></i>`
-                        } else if (type.includes('video')) {
-                            form_right_grid_file.innerHTML = `<i class="fa fa-file-movie-o"></i>`
-                        } else if (type.includes('audio')) {
-                            form_right_grid_file.innerHTML = `<i class="fa fa-file-audio-o"></i>`
-                        } else {
-                            form_right_grid_file.innerHTML = `<i class="fa fa-file-o"></i>`
-                        }
-                        formRightGrid.appendChild(form_right_grid_file)
                     }
                 };
 

@@ -623,9 +623,54 @@ a:active {
     position: relative;
     padding: 25px;
     box-sizing: border-box;
+}
+
+#overlay-show-container {
+    background: #1E1E1E;
+    height: 100%;
+    width: 100%;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+    padding:  15px;
+    box-sizing: border-box;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+#overlay-show-content {
+    height: 95%;
+    width: 100%;
+    background-color: #222222;
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    color: rgba(255, 255, 255, 0.60);
+}
+
+#overlay-show-content-name {
+    background: #222222;
+    height: 5%;
+    width: 100%;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: row;
-    gap: 50px;
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.60);
+}
+
+.overlay-show-content {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    content-visibility: auto;
 }
 
 /* 3.dots */
