@@ -313,101 +313,123 @@ addFolderAction.addEventListener('click', () => {
                 iconCloseDot.classList.add('fa','fa-close');
                 closeDot.append(iconCloseDot);
                 closeDot.addEventListener('click',() => {
-                    //REMOVE EVENT LISTENERS
+                    document.removeEventListener("keydown", ArrowFunctionRemove);
                     overlay_show_shadow.remove();
                 });
-                /*
+                
                 const leftArrowDot = document.createElement('div');
                 leftArrowDot.classList.add('dot','left-arrow-dot')
                 const iconLeftArrowDot = document.createElement('i');
                 iconLeftArrowDot.classList.add('fa','fa-chevron-left');
                 leftArrowDot.append(iconLeftArrowDot);
-                leftArrowDot.addEventListener('click',() => {
-                    leftrightIndex --
-                    if (leftrightIndex < 0) {
-                        leftrightIndex = importField.files.length - 1
+                function LeftArrowFunction() {
+                    index --
+                    if (index < 0) {
+                        index = importField.files.length - 1
                     }
+
+                    let final_byte_size = ''
+                    if (importField.files[index].size * 0.000001 > 1) {
+                        let byte_size = importField.files[index].size * 0.000001
+                        final_byte_size = byte_size.toFixed(2) + 'MB'
+                    } else {
+                        let byte_size = importField.files[index].size * 0.001
+                        final_byte_size = byte_size.toFixed(2) + 'KB'
+                    }
+
                     if(window.File && window.FileReader && window.FileList && window.Blob) {
                         const reader = new FileReader()
                         reader.addEventListener('load', (event) => {
-                            if (importField.files.item(leftrightIndex).type.includes('image')){
+                            if (importField.files.item(index).type.includes('image')){
                                 overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
-                            } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                            } else if (importField.files.item(index).type.includes('video')) {
                                 overlay_show_content.innerHTML = `
                                 <video class="overlay-show-content" controls autoplay>
-                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                    <source src="${event.target.result}" type="${importField.files.item(index).type}" />
                                 </video>
                                 `
-                            } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                            } else if (importField.files.item(index).type.includes('audio')) {
                                 overlay_show_content.innerHTML = `
                                 <audio controls autoplay>
-                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                    <source src="${event.target.result}" type="${importField.files.item(index).type}" />
                                 </audio>
                                 `
+                                overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
                             } else {
                                 overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
                             }
                         })
-                        reader.readAsDataURL(importField.files[leftrightIndex])
-                    } else {
-                        alert('Your browser does not spport File API')
-                    }
-                });
-                /*
-                document.addEventListener('keydown', (e) => {
-                    if (e.key == 'ArrowLeft') {
-                        console.log('left')
-                    }
-                })
-                */
-                /*
+                        reader.readAsDataURL(importField.files[index])
+                    } else { alert('Your browser does not spport File API') }
+                }
+                leftArrowDot.addEventListener('click', LeftArrowFunction);
+                
                 const rightArrowDot = document.createElement('div');
                 rightArrowDot.classList.add('dot','right-arrow-dot')
                 const iconRightArrowDot = document.createElement('i');
                 iconRightArrowDot.classList.add('fa','fa-chevron-right');
                 rightArrowDot.append(iconRightArrowDot);
-                rightArrowDot.addEventListener('click',() => {
-                    leftrightIndex ++
-                    if (leftrightIndex > importField.files.length - 1) {
-                        leftrightIndex = 0
+                function RightArrowFunction() {
+                    index ++
+                    if (index > importField.files.length - 1) {
+                        index = 0
                     }
+
+                    let final_byte_size = ''
+                    if (importField.files[index].size * 0.000001 > 1) {
+                        let byte_size = importField.files[index].size * 0.000001
+                        final_byte_size = byte_size.toFixed(2) + 'MB'
+                    } else {
+                        let byte_size = importField.files[index].size * 0.001
+                        final_byte_size = byte_size.toFixed(2) + 'KB'
+                    }
+
                     if(window.File && window.FileReader && window.FileList && window.Blob) {
                         const reader = new FileReader()
                         reader.addEventListener('load', (event) => {
-                            if (importField.files.item(leftrightIndex).type.includes('image')){
+                            if (importField.files.item(index).type.includes('image')){
                                 overlay_show_content.innerHTML = `<img class="overlay-show-content" src="${event.target.result}" loading="lazy" decoding="async">`
-                            } else if (importField.files.item(leftrightIndex).type.includes('video')) {
+                                overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                            } else if (importField.files.item(index).type.includes('video')) {
                                 overlay_show_content.innerHTML = `
                                 <video class="overlay-show-content" controls autoplay>
-                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                    <source src="${event.target.result}" type="${importField.files.item(index).type}" />
                                 </video>
                                 `
-                            } else if (importField.files.item(leftrightIndex).type.includes('audio')) {
+                                overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
+                            } else if (importField.files.item(index).type.includes('audio')) {
                                 overlay_show_content.innerHTML = `
                                 <audio controls autoplay>
-                                    <source src="${event.target.result}" type="${importField.files.item(leftrightIndex).type}" />
+                                    <source src="${event.target.result}" type="${importField.files.item(index).type}" />
                                 </audio>
                                 `
+                                overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
                             } else {
                                 overlay_show_content.innerHTML = `<i class="fa fa-file-o"></i>`
+                                overlay_show_content_name.innerHTML = `${importField.files[index].name} ${final_byte_size}`
                             }
                         })
-                        reader.readAsDataURL(importField.files[leftrightIndex])
-                    } else {
-                        alert('Your browser does not spport File API')
-                    }
-                });
-                /*
-                document.addEventListener('keydown', (e) => {
+                        reader.readAsDataURL(importField.files[index])
+                    } else { alert('Your browser does not spport File API') }
+                }
+                rightArrowDot.addEventListener('click', RightArrowFunction);
+
+                const ArrowFunctionRemove = (e) => {
                     if (e.key == 'ArrowRight') {
-                        console.log('right')
+                        RightArrowFunction()
                     }
-                })
-                */
+                    if (e.key == 'ArrowLeft') {
+                        LeftArrowFunction()
+                    }
+                }
+                document.addEventListener('keydown', ArrowFunctionRemove)
 
                 //SHOW-OVERLAY APPEND
                 overlay_show_container.append(overlay_show_content,overlay_show_content_name)
-                overlay_show.append(closeDot,/*leftArrowDot,rightArrowDot,*/overlay_show_container)
+                overlay_show.append(closeDot,leftArrowDot,rightArrowDot,overlay_show_container)
                 overlay_show_shadow.append(overlay_show)
                 document.body.append(overlay_show_shadow)
             })
