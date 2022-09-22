@@ -45,7 +45,7 @@ app.post('/sort', (request, response) => {
     response.end();
 });
 
-app.get('/api', (request, response) => {
+app.get('/fetchtext', (request, response) => {
     if (data_array.keyword_value) {
         if (data_array.filter_value === 'date_u') {
             text_database.find({$or: [
@@ -118,14 +118,14 @@ app.get('/api', (request, response) => {
 });
 
 let data_id = ''
-app.post('/api', (request, response) => {
+app.post('/uploadtext', (request, response) => {
     const data = request.body;
     data_id = data._id
     text_database.insert(data);
     response.end();
 });
 
-app.post('/update', (request, response) => {
+app.post('/updatetext', (request, response) => {
     const data = request.body;
     text_database.update(
         {_id: data._id},
@@ -152,7 +152,7 @@ app.post('/update', (request, response) => {
     response.end();
 });
 
-app.post("/multiple", upload.array("files"),(req, res) => {
+app.post("/uploadfiles", upload.array("files"),(req, res) => {
     const data = req.files
     data.forEach(arrayItem => {
         const namefix = Buffer.from(arrayItem.originalname, 'latin1').toString('utf8')
@@ -181,54 +181,55 @@ app.get("/fetchrecieve", (req, res) => {
     data_id1 = ''
 })
 
-app.post('/deletion', (request, response) => {
-    if (request.body.array) {
-        const array = request.body.array
-        for (array_item of array) {
-            files_database.find({ _id: array_item }, function(err, data){
+app.post('/deletefolder', (request, response) => {
+    const value = request.body.data_id
+    text_database.remove({_id: value}, {},(err, numRemoved) => {
+        if (err) {
+            response.end();
+            return; 
+        }
+    });
+    text_database.persistence.compactDatafile()
+    files_database.find({ id: value }, function(err, data){
+        if (err) {
+            response.end();
+            return; 
+        }
+        for (item of data) {
+            fs.unlink(item.path, (err) => {
                 if (err) {
-                    response.end();
-                    return; 
-                }
-                for (data_item of data) {
-                    fs.unlink(data_item.path, (err) => {
-                        if (err) {
-                            throw err;
-                        }
-                    });
-                }
-            })
-            files_database.remove({ _id: array_item },  { multi: true },(err, numRemoved) => {
-                if (err) {
-                    response.end();
-                    return; 
+                    throw err;
                 }
             });
-            files_database.persistence.compactDatafile()
         }
-    } else {
-        const value = request.body.data_id
-        text_database.remove({_id: value}, {},(err, numRemoved) => {
+    })
+    files_database.remove({ id: value },  { multi: true },(err, numRemoved) => {
+        if (err) {
+            response.end();
+            return; 
+        }
+    });
+    files_database.persistence.compactDatafile()
+    response.end();
+});
+
+app.post('/deletefiles', (request, response) => {
+    const array = request.body.array
+    for (array_item of array) {
+        files_database.find({ _id: array_item }, function(err, data){
             if (err) {
                 response.end();
                 return; 
             }
-        });
-        text_database.persistence.compactDatafile()
-        files_database.find({ id: value }, function(err, data){
-            if (err) {
-                response.end();
-                return; 
-            }
-            for (item of data) {
-                fs.unlink(item.path, (err) => {
+            for (data_item of data) {
+                fs.unlink(data_item.path, (err) => {
                     if (err) {
                         throw err;
                     }
                 });
             }
         })
-        files_database.remove({ id: value },  { multi: true },(err, numRemoved) => {
+        files_database.remove({ _id: array_item },  { multi: true },(err, numRemoved) => {
             if (err) {
                 response.end();
                 return; 
@@ -284,9 +285,9 @@ app.post("/namecheck", (req, res) => {
 
 app.get("/namecheck", (req, res) => {
     if (data_boolean) {
-        res.json({ samename : true });
+        res.json({ name_check_data : true });
     } else {
-        res.json({ samename : false });
+        res.json({ name_check_data : false });
     }
     data_boolean = ''
 })

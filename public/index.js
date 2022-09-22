@@ -1,4 +1,3 @@
-//SORTING
 //SORTING-SEARCH
 const search = document.querySelector('#search')
 const search_bar = document.querySelector('#search-bar')
@@ -68,7 +67,6 @@ direction.addEventListener('click', () => {
 //FIRST INITIATION
 getAllData(search_bar.value,direction_var,filter_value);
 
-//ACTIONS
 //ACTIONS-REFRESH
 const refresh = document.querySelector('#refresh')
 refresh.addEventListener('click', () => {
@@ -91,58 +89,56 @@ refresh.addEventListener('click', () => {
 
 //ACTIONS-ADDFOLDER
 const addFolderAction = document.querySelector('#add-folder');
-
 addFolderAction.addEventListener('click', () => {
+    //UPLOAD-OVERLAY INITIATION
     const overlayShadow = document.createElement('div');
     overlayShadow.id = 'overlay-shadow';
-
     const overlay = document.createElement('div');
     overlay.id = 'overlay';
 
-    /* DOTS */
+    //UPLOAD-OVERLAY-DOTS-CLOSEDOT
     const closeDot = document.createElement('div');
     closeDot.classList.add('dot','close-dot');
     const iconCloseDot = document.createElement('i');
     iconCloseDot.classList.add('fa','fa-close');
     closeDot.append(iconCloseDot);
+    closeDot.addEventListener('click',() => {
+        overlayShadow.remove();
+    });
 
+    //UPLOAD-OVERLAY-DOTS-SAVEDOT
     const saveDot = document.createElement('div');
     saveDot.classList.add('dot','save-dot');
     const iconSaveDot = document.createElement('i');
     iconSaveDot.classList.add('fa','fa-save');
     saveDot.append(iconSaveDot);
-
-    overlay.append(closeDot,saveDot);
-
-    closeDot.addEventListener('click',() => {
-        overlayShadow.innerHTML = '';
-        overlayShadow.remove();
-    });
-
     saveDot.addEventListener('click', async () => {
         if (formLeftName.value !== '') {
-            const body = { data_name : formLeftName.value}
+            //checking the individuality of folder name
+            const name_check = { data_name : formLeftName.value }
             await fetch("/namecheck",{
                 method: "POST", 
                 headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify(body)
+                body: JSON.stringify(name_check)
             })
-            const response_none = await fetch("/namecheck")
-            const response_text = await response_none.json()
-            if (response_text.samename) {
+            const name_check_response_fetch = await fetch("/namecheck")
+            const name_check_response_json = await name_check_response_fetch.json()
+            if (name_check_response_json.name_check_data) {
                 alert('File name already taken!')
                 return
             }
+
+            //creating and sending an object containing text content
             const data_name = formLeftName.value;
             const data_name_lc = data_name.toLowerCase()
             const data_alias = formLeftAlias.value;
             const data_alias_lc = data_alias.toLowerCase()
             const data_description = formLeftDescription.value;
             const data_description_lc = data_description.toLowerCase()
+            const data_main_image = flag_image
             const _id = String(Date.now());
             const data_modified = _id
-            const data_main_image = flag_image
-            const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description, data_description_lc, data_modified, data_main_image, _id};
+            const data = { data_name, data_name_lc, data_alias, data_alias_lc, data_description, data_description_lc, data_modified, data_main_image, _id };
             const data_content = {
                 method: 'POST',
                 headers: {
@@ -150,25 +146,26 @@ addFolderAction.addEventListener('click', () => {
                 },
                 body: JSON.stringify(data)
             };
-            fetch('/api',data_content);
-            const formData = new FormData()
+            fetch('/uploadtext',data_content);
+
+            //creating and sending formData containing file content
+            const formData = new FormData()    
             for (let i = 0; i < importField.files.length; i++) {
                 formData.append("files", importField.files[i])
             }
-            await fetch("/multiple", {method: "POST",body: formData});
+            await fetch("/uploadfiles", { method: "POST", body: formData} );
+
+            //reset
             getAllData(search_bar.value,direction_var,filter_value);
-            overlayShadow.innerHTML = '';
             overlayShadow.remove();
-        } else {
-            alert('Specify folder name!')
-        }
+        } else {alert('Specify folder name!')}
     })
 
-    /* OVERLAY LOOK */
-    /* 1.form left */
+    //UPLOAD-OVERLAY-FORMLEFT
     const formLeft = document.createElement('form');
     formLeft.id = 'form-left';
 
+    //UPLOAD-OVERLAY-FORMLEFT-(NAME/ALIAS/DESCRIPTION)
     const formLeftName = document.createElement('input');
     formLeftName.id = 'form-left-name';
     formLeftName.type = 'text';
@@ -184,13 +181,13 @@ addFolderAction.addEventListener('click', () => {
 
     formLeft.append(formLeftName,formLeftAlias,formLeftDescription);
 
-    /* 2.form-right */
+    //UPLOAD-OVERLAY-FORMRIGHT
     const formRight = document.createElement('div');
     formRight.id = 'form-right';
 
+    //UPLOAD-OVERLAY-FORMRIGHT-(GRID/IMPORT)
     const formRightGrid = document.createElement('div');
     formRightGrid.id = 'form-right-grid';
-
     const formRightImport = document.createElement('form');
     formRightImport.id = 'form-right-import';
     const importField = document.createElement('input');
@@ -198,20 +195,24 @@ addFolderAction.addEventListener('click', () => {
     importField.id = 'import-field';
     importField.setAttribute("multiple","");
 
-    /* add multiple folders, add more folders afterwards, delete */
-    const dt = new DataTransfer();
+    //add files, add more files, show, flag and delete files
     let flag_image = ''
-    importField.addEventListener('change', (e) => {
-        /*console.log(e.target.files[0].size)*/
+    const dt = new DataTransfer();
+    importField.addEventListener('change', () => {
         for(let i = 0; i < importField.files.length; i++){
+            //for each file imported, each time files are imported
             const form_right_grid_file = document.createElement('div')
-            form_right_grid_file.classList.add('form-right-grid-file')
+            form_right_grid_file.classList.add('form-right-grid-file','new-frgf')
+            form_right_grid_file.id = i
 
             const file_overlay = document.createElement('div')
+            file_overlay.classList.add('file-overlay')
+            file_overlay.style.display = "none"
+            
             const trash_icon = document.createElement('i')
             trash_icon.classList.add('fa','fa-trash-o')
             trash_icon.addEventListener('click', () => {
-                let delete_file = trash_icon.parentElement.lastElementChild.innerHTML
+                let delete_file = trash_icon.parentElement.lastElementChild.textContent
                 trash_icon.parentElement.parentElement.remove()
                 for(let i = 0; i < dt.items.length; i++){
                     if(delete_file === dt.items[i].getAsFile().name){
@@ -219,10 +220,14 @@ addFolderAction.addEventListener('click', () => {
                         continue;
                     }
                 }
-                document.getElementById('import-field').files = dt.files;
-                if (flag_image === trash_icon.nextSibling.innerText) {
+                if (flag_image === trash_icon.nextSibling.textContent) {
                     flag_image = ''
                 }
+                importField.files = dt.files;
+                const current_files = document.querySelectorAll('.new-frgf')       
+                current_files.forEach((file,file_index) => {
+                    file.id = file_index
+                })
             })
 
             const flag_icon = document.createElement('i')
@@ -236,7 +241,7 @@ addFolderAction.addEventListener('click', () => {
                     }
                     flag_icon.classList.remove('fa-flag-o')
                     flag_icon.classList.add('fa-flag')
-                    flag_image = flag_icon.nextSibling.nextSibling.innerText
+                    flag_image = flag_icon.nextSibling.nextSibling.textContent
                 } else {
                     flag_icon.classList.remove('fa-flag')
                     flag_icon.classList.add('fa-flag-o')
@@ -244,18 +249,15 @@ addFolderAction.addEventListener('click', () => {
                 }
             })
 
-            const index = i
             const type = importField.files.item(i).type
             const eye_icon = document.createElement('i')
             eye_icon.classList.add('fa','fa-eye')
             eye_icon.addEventListener('click', () => {
-                /*
-                const current_files = document.querySelectorAll('.form-right-grid-file')       
+                const current_files = document.querySelectorAll('.new-frgf')       
                 current_files.forEach((file,file_index) => {
                     file.id = file_index
                 })
-                let leftrightIndex = eye_icon.parentElement.parentElement.id
-                */
+                let index = eye_icon.parentElement.parentElement.id
 
                 const overlay_show_shadow = document.createElement('div')
                 overlay_show_shadow.id = 'overlay-show-shadow'
@@ -303,9 +305,7 @@ addFolderAction.addEventListener('click', () => {
                         }
                     })
                     reader.readAsDataURL(importField.files[index])
-                } else {
-                    alert('Your browser does not spport File API')
-                }
+                } else { alert('Your browser does not spport File API') }
 
                 const closeDot = document.createElement('div');
                 closeDot.classList.add('dot','close-dot');
@@ -313,8 +313,7 @@ addFolderAction.addEventListener('click', () => {
                 iconCloseDot.classList.add('fa','fa-close');
                 closeDot.append(iconCloseDot);
                 closeDot.addEventListener('click',() => {
-                    /* REMOVE EVENT LISTENERS */
-                    overlay_show_shadow.innerHTML = '';
+                    //REMOVE EVENT LISTENERS
                     overlay_show_shadow.remove();
                 });
                 /*
@@ -405,17 +404,17 @@ addFolderAction.addEventListener('click', () => {
                     }
                 })
                 */
+
+                //SHOW-OVERLAY APPEND
                 overlay_show_container.append(overlay_show_content,overlay_show_content_name)
                 overlay_show.append(closeDot,/*leftArrowDot,rightArrowDot,*/overlay_show_container)
-
                 overlay_show_shadow.append(overlay_show)
                 document.body.append(overlay_show_shadow)
             })
+
             const file_overlay_name = document.createElement('p')
             file_overlay_name.classList.add('file-overlay-name')
-            file_overlay_name.innerHTML = `${importField.files.item(i).name}`
-            file_overlay.style.display = "none"
-            file_overlay.classList.add('file-overlay')
+            file_overlay_name.innerHTML = `${importField.files.item(i).name}` 
             
             form_right_grid_file.addEventListener('mouseenter', () => {
                 file_overlay.style.display = "flex"
@@ -446,29 +445,26 @@ addFolderAction.addEventListener('click', () => {
                 })
                 reader.readAsDataURL(importField.files[i])
                 formRightGrid.appendChild(form_right_grid_file)
-            } else {
-                alert('Your browser does not spport File API')
-            }
+            } else { alert('Your browser does not spport File API') }
         };
 
         for (let file of importField.files) {
             dt.items.add(file);
         }
-
         importField.files = dt.files;
     });
     
+    //FORM/UPLOAD-OVERLAY-APPEND
     formRightImport.append(importField)
     formRight.append(formRightGrid,formRightImport)
-
-    /* APENDING OF ELEMENTS */
-    overlay.append(formLeft,formRight)
+    overlay.append(formLeft,formRight,closeDot,saveDot)
     overlayShadow.append(overlay)
     document.body.append(overlayShadow)
 })    
-/*SECONDARY-ADD-FILE--------------------------------------------------------------------------------------------------*/
-/* GET DATA FROM DB ON LOAD AND ON ADDING OR DELETING */
+
+//get data from text database
 async function getAllData(keyword_value, direction_value, filter_value) {
+    // send search direction and filter
     const value_in = {keyword_value, direction_value, filter_value}
     const value_req = {
         method: 'POST',
@@ -479,31 +475,38 @@ async function getAllData(keyword_value, direction_value, filter_value) {
     };
     fetch('/sort',value_req)
 
-    const response = await fetch('/api')
-    const data = await response.json();
+    // recieve filtered data
+    const fetch_text_response = await fetch('/fetchtext')
+    const data = await fetch_text_response.json();
 
+    // clear grid each time function is called
     const grid = document.querySelector('#grid')
     grid.innerHTML = ''
+
+    // for each object from data create a folder
     for (item of data) {
+        //FOLDER
         const folder = document.createElement('div')
         folder.classList.add('folder')
         const current_item_data = item
         folder.id = item._id
 
-        /* 1.folder_main */
+        //FOLDER-FOLDERMAIN
         const folder_main = document.createElement('div')
         folder_main.classList.add('folder-main')
-
         const folder_main_cover = document.createElement('div')
         folder_main_cover.classList.add('folder-main-cover')
-        folder_main_cover.innerHTML = ``
-
+        folder_main_cover.innerHTML = `
+            <div class="folder-main-cover-shadow">
+                <i class="fa fa-folder-open-o" style="font-size: 50px;"></i>
+            </div>
+        `
         const folder_main_content = document.createElement('div')
         folder_main_content.classList.add('folder-main-content')
-        const fmc_h4 = document.createElement('h4')
-        fmc_h4.textContent = `${item.data_name}`
-        const fmc_p_u = document.createElement('p')
-        const fmc_p_m = document.createElement('p')
+        const folder_main_content_h4 = document.createElement('h4')
+        folder_main_content_h4.textContent = `${item.data_name}`
+        const folder_main_content_p_u = document.createElement('p')
+        const folder_main_content_p_m = document.createElement('p')
         const dt_u = new Date(Number(item._id))
         const padL = (nr, len = 2, chr = `0`) => `${nr}`.padStart(2, chr);
         const date_u = `${
@@ -515,7 +518,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             padL(dt_u.getSeconds())
         }`
         const dt_m = new Date(Number(item.data_modified))
-        fmc_p_u.innerHTML = `Uploaded: ${date_u}`
+        folder_main_content_p_u.innerHTML = `Uploaded: ${date_u}`
         const date_m = `${
             padL(dt_m.getDate())}/${
             padL(dt_m.getMonth()+1)}/${
@@ -524,102 +527,35 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             padL(dt_m.getMinutes())}:${
             padL(dt_m.getSeconds())
         }`
-        fmc_p_m.innerHTML = `Modified: ${date_m}`
-        folder_main_content.append(fmc_h4,fmc_p_m,fmc_p_u)
+        folder_main_content_p_m.innerHTML = `Modified: ${date_m}`
+        folder_main_content.append(folder_main_content_h4,folder_main_content_p_m,folder_main_content_p_u)
 
         folder_main.append(folder_main_cover,folder_main_content)
 
-        /* folder open */
+        // folder open
         folder_main.addEventListener('click', async () => {
+            //UPDATE/DELETE-OVERLAY INITIATION
             const overlayShadow = document.createElement('div');
             overlayShadow.id = 'overlay-shadow';
-        
             const overlay = document.createElement('div');
             overlay.id = 'overlay';
         
-            /* DOTS */
+            //UPDATE/DELETE-OVERLAY-DOTS-CLOSEDOT
             const closeDot = document.createElement('div');
             closeDot.classList.add('dot','close-dot');
             const iconCloseDot = document.createElement('i');
             iconCloseDot.classList.add('fa','fa-close');
             closeDot.append(iconCloseDot);
-        
-            const saveDot = document.createElement('div');
-            saveDot.classList.add('dot','save-dot');
-            const iconSaveDot = document.createElement('i');
-            iconSaveDot.classList.add('fa','fa-save');
-            saveDot.append(iconSaveDot);
-
+            closeDot.addEventListener('click',() => {
+                overlayShadow.remove();
+            });
+            
+            //UPDATE/DELETE-OVERLAY-DOTS-DELETEDOT
             const deleteDot = document.createElement('div');
             deleteDot.classList.add('dot','delete-dot');
             const iconDeleteDot = document.createElement('i');
             iconDeleteDot.classList.add('fa','fa-trash');
             deleteDot.append(iconDeleteDot);
-        
-            overlay.append(closeDot,saveDot,deleteDot);
-        
-            closeDot.addEventListener('click',() => {
-                overlayShadow.innerHTML = '';
-                overlayShadow.remove();
-            });
-        
-            saveDot.addEventListener('click', async() => {
-                if (formLeftName.value !== '') {
-                    const body = { data_name : formLeftName.value, _id : folder.id}
-                    await fetch("/namecheck",{
-                        method: "POST", 
-                        headers: { 'Content-Type': 'application/json'},
-                        body: JSON.stringify(body)
-                    })
-                    const response_none = await fetch("/namecheck")
-                    const response_text = await response_none.json()
-                    if (response_text.samename) {
-                        alert('File name already taken!')
-                        return
-                    }
-                    const data_name = formLeftName.value;
-                    const data_name_lc = data_name.toLowerCase()
-                    const data_alias = formLeftAlias.value;
-                    const data_alias_lc = data_alias.toLowerCase()
-                    const data_description = formLeftDescription.value;
-                    const data_description_lc = data_description.toLowerCase()
-                    const data_modified = String(Date.now());
-                    const _id = folder.id;
-                    const data_main_image = flag_image
-                    const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description,  data_description_lc, data_modified, data_main_image, _id};
-                    const data_content = {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    };
-                    fetch('/update',data_content);
-                    const formData = new FormData()
-                    for (let i = 0; i < importField.files.length; i++) {
-                        formData.append("files", importField.files[i])
-                    }
-                    await fetch("/multiple", {method: "POST",body: formData});
-                    if (delete_array.length !== 0) {
-                        const data = { array:delete_array };
-                        const deletion = {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(data)
-                        };
-                        fetch('/deletion',deletion);
-                        delete_array = ''
-                    }
-                    getAllData(search_bar.value,direction_var,filter_value);   
-                    overlayShadow.innerHTML = '';
-                    overlayShadow.remove();              
-                } else {
-                    alert('Specify folder name!')
-                }
-            })
-
             deleteDot.addEventListener('click', () => {
                 const data_id = folder.id;
                 const data = {data_id};
@@ -630,43 +566,118 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     },
                     body: JSON.stringify(data)
                 };
-                fetch('/deletion',deletion);
+                fetch('/deletefolder',deletion);
                 getAllData(search_bar.value,direction_var,filter_value);
-                overlayShadow.innerHTML = '';
                 overlayShadow.remove();
             })
+            
+            //UPDATE/DELETE-OVERLAY-DOTS-SAVEDOT
+            const saveDot = document.createElement('div');
+            saveDot.classList.add('dot','save-dot');
+            const iconSaveDot = document.createElement('i');
+            iconSaveDot.classList.add('fa','fa-save');
+            saveDot.append(iconSaveDot);
+            saveDot.addEventListener('click', async() => {
+                if (formLeftName.value !== '') {
+                    //checking the individuality of folder name
+                    const name_check = { data_name : formLeftName.value, _id : folder.id}
+                    await fetch("/namecheck",{
+                        method: "POST", 
+                        headers: { 'Content-Type': 'application/json'},
+                        body: JSON.stringify(name_check)
+                    })
+                    const name_check_response_fetch = await fetch("/namecheck")
+                    const name_check_response_json = await name_check_response_fetch.json()
+                    if (name_check_response_json.name_check_data) {
+                        alert('File name already taken!')
+                        return
+                    }
+
+                    //creating and sending an object containing text content
+                    const data_name = formLeftName.value;
+                    const data_name_lc = data_name.toLowerCase()
+                    const data_alias = formLeftAlias.value;
+                    const data_alias_lc = data_alias.toLowerCase()
+                    const data_description = formLeftDescription.value;
+                    const data_description_lc = data_description.toLowerCase()
+                    const data_main_image = flag_image
+                    const data_modified = String(Date.now());
+                    const _id = folder.id;
+                    const data = {data_name, data_name_lc, data_alias, data_alias_lc, data_description,  data_description_lc, data_modified, data_main_image, _id};
+                    const data_content = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type':'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    };
+                    fetch('/updatetext',data_content);
+
+                    //creating and sending formData containing file content
+                    const formData = new FormData()
+                    for (let i = 0; i < importField.files.length; i++) {
+                        formData.append("files", importField.files[i])
+                    }
+                    await fetch("/uploadfiles", {method: "POST",body: formData});
+
+                    //checking if user wants to delete any file
+                    if (delete_array.length !== 0) {
+                        const data = { array:delete_array };
+                        const deletion = {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        };
+                        fetch('/deletefiles',deletion);
+                        delete_array = ''
+                    }
+
+                    //reset
+                    getAllData(search_bar.value,direction_var,filter_value);   
+                    overlayShadow.remove();              
+                } else { alert('Specify folder name!') }
+            })
         
-            /* OVERLAY LOOK */
-            /* 1.form left */
+            //UPDATE/DELETE-OVERLAY-FORMLEFT
             const formLeft = document.createElement('form');
             formLeft.id = 'form-left';
-        
+            
+            //UPDATE/DELETE-OVERLAY-FORMLEFT-(NAME/ALIAS/DESCRIPTION)
             const formLeftName = document.createElement('input');
             formLeftName.id = 'form-left-name';
             formLeftName.type = 'text';
             formLeftName.placeholder = 'Folder Title...';
             formLeftName.maxLength = '20'
             formLeftName.autocomplete = 'off'
-            formLeftName.value = `${fmc_h4.textContent}`
+            formLeftName.value = `${folder_main_content_h4.textContent}`
             const formLeftAlias = document.createElement('textarea');
             formLeftAlias.id = 'form-left-alias';
             formLeftAlias.placeholder = 'Alias names...';
-            formLeftAlias.value = `${ica_p.textContent}`
+            formLeftAlias.value = `${info_content_alias_p.textContent}`
             const formLeftDescription = document.createElement('textarea');
             formLeftDescription.id = 'form-left-description';
             formLeftDescription.placeholder = 'Description...';
-            formLeftDescription.value = `${icd_p.textContent}`
+            formLeftDescription.value = `${info_content_description_p.textContent}`
         
             formLeft.append(formLeftName,formLeftAlias,formLeftDescription);
         
-            /* 2.form-right */
+            //UPDATE/DELETE-OVERLAY-FORMRIGHT
             const formRight = document.createElement('div');
             formRight.id = 'form-right';
 
+            //UPDATE/DELETE-OVERLAY-FORMRIGHT-(GRID/IMPORT)
             const formRightGrid = document.createElement('div');
             formRightGrid.id = 'form-right-grid';
+            const formRightImport = document.createElement('form');
+            formRightImport.id = 'form-right-import';
+            const importField = document.createElement('input');
+            importField.type = 'file';
+            importField.id = 'import-field';
+            importField.setAttribute("multiple","");
 
-            /* HERE */
+            //send id and get files from files database
             const data_id = folder.id;
             const datasend = {data_id};
             const id = {
@@ -677,27 +688,28 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                 body: JSON.stringify(datasend)
             };
             fetch('/fetchsend',id);
-
             const response = await fetch('/fetchrecieve')
             const datarecieve = await response.json();
 
+            //for each recieved file create a box in a grid
             let delete_array = []
             let current_item_main_image = current_item_data.data_main_image
             let flag_image = current_item_main_image
             for(current_data_item of datarecieve){
                 let current_item = current_data_item
+
                 const form_right_grid_file = document.createElement('div')
                 form_right_grid_file.classList.add('form-right-grid-file')
 
                 const file_overlay = document.createElement('div')
-                const trash_icon = document.createElement('i')
+                file_overlay.classList.add('file-overlay')
+                file_overlay.style.display = 'none'
                 
-
+                const trash_icon = document.createElement('i')
                 trash_icon.classList.add('fa','fa-trash-o')
                 trash_icon.addEventListener('click', () => {
                     delete_array.push(current_item._id)
                     trash_icon.parentElement.parentElement.remove()
-
                     if (flag_image === trash_icon.nextSibling.innerText) {
                         flag_image = ''
                     }
@@ -709,7 +721,6 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                 } else {
                     flag_icon.classList.add("fa","fa-flag-o")
                 }
-
                 flag_icon.addEventListener('click', () => {
                     if (flag_icon.classList.contains('fa-flag-o')) {
                         const flags = document.querySelectorAll('.fa-flag')
@@ -780,7 +791,6 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         overlay_show_content_name.innerHTML = `${current_item.originalname} ${final_byte_size}`
                     }
 
-    
                     const closeDot = document.createElement('div');
                     closeDot.classList.add('dot','close-dot');
                     const iconCloseDot = document.createElement('i');
@@ -788,7 +798,6 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     closeDot.append(iconCloseDot);
                     closeDot.addEventListener('click',() => {
                         /* REMOVE EVENT LISTENERS */
-                        overlay_show_shadow.innerHTML = '';
                         overlay_show_shadow.remove();
                     });
                     /*
@@ -1065,9 +1074,10 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         }
                     })
                     */
+
+                    //SHOW-OVERLAY APPEND
                     overlay_show_container.append(overlay_show_content,overlay_show_content_name)
                     overlay_show.append(closeDot,/*leftArrowDot,rightArrowDot,*/overlay_show_container)
-    
                     overlay_show_shadow.append(overlay_show)
                     document.body.append(overlay_show_shadow)
                 })
@@ -1075,9 +1085,6 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                 const file_overlay_name = document.createElement('p')
                 file_overlay_name.classList.add('file-overlay-name')
                 file_overlay_name.innerHTML = `${current_data_item.originalname}`
-                file_overlay.style.display = 'none'
-                file_overlay.classList.add('file-overlay')
-
         
                 form_right_grid_file.addEventListener('mouseenter', () => {
                     file_overlay.style.display = "flex"
@@ -1107,21 +1114,19 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                 formRightGrid.appendChild(form_right_grid_file)
             };
 
-            const formRightImport = document.createElement('form');
-            formRightImport.id = 'form-right-import';
-            const importField = document.createElement('input');
-            importField.type = 'file';
-            importField.id = 'import-field';
-            importField.setAttribute("multiple","");
-
-            /* add multiple folders, add more folders afterwards, delete */
+            //add files, add more files, show, flag and delete files
             const dt = new DataTransfer();
             importField.addEventListener('change', () => {
                 for(let i = 0; i < importField.files.length; i++){
+                    //for each file imported, each time files are imported
                     const form_right_grid_file = document.createElement('div')
-                    form_right_grid_file.classList.add('form-right-grid-file')
+                    form_right_grid_file.classList.add('form-right-grid-file','new-frgf')
+                    form_right_grid_file.id = i
 
                     const file_overlay = document.createElement('div')
+                    file_overlay.classList.add('file-overlay')
+                    file_overlay.style.display = "none"
+
                     const trash_icon = document.createElement('i')
                     trash_icon.classList.add('fa','fa-trash-o')
                     trash_icon.addEventListener('click', () => {
@@ -1133,10 +1138,14 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                                 continue;
                             }
                         }
-                        document.getElementById('import-field').files = dt.files;
                         if (flag_image === trash_icon.nextSibling.innerText) {
                             flag_image = ''
                         }
+                        importField.files = dt.files;
+                        const current_files = document.querySelectorAll('.new-frgf')       
+                        current_files.forEach((file,file_index) => {
+                            file.id = file_index
+                        })
                     })
 
                     const flag_icon = document.createElement('i')
@@ -1158,19 +1167,15 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         }
                     })
 
-                    const index = i
                     const type = importField.files.item(i).type
                     const eye_icon = document.createElement('i')
                     eye_icon.classList.add('fa','fa-eye')
                     eye_icon.addEventListener('click', () => {
-                        console.log(importField.files[index])
-                        /*
-                        const current_files = document.querySelectorAll('.form-right-grid-file')       
+                        const current_files = document.querySelectorAll('.new-frgf')       
                         current_files.forEach((file,file_index) => {
                             file.id = file_index
                         })
-                        */
-                        //let leftrightIndex = eye_icon.parentElement.parentElement.id - datarecieve.length - delete_array.length
+                        let index = eye_icon.parentElement.parentElement.id
         
                         const overlay_show_shadow = document.createElement('div')
                         overlay_show_shadow.id = 'overlay-show-shadow'
@@ -1218,9 +1223,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                                 }
                             })
                             reader.readAsDataURL(importField.files[index])
-                        } else {
-                            alert('Your browser does not spport File API')
-                        }
+                        } else { alert('Your browser does not spport File API') }
         
                         const closeDot = document.createElement('div');
                         closeDot.classList.add('dot','close-dot');
@@ -1229,7 +1232,6 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         closeDot.append(iconCloseDot);
                         closeDot.addEventListener('click',() => {
                             /* REMOVE EVENT LISTENERS */
-                            overlay_show_shadow.innerHTML = '';
                             overlay_show_shadow.remove();
                         });
                         /*
@@ -1518,17 +1520,17 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                             }
                         })
                         */
+
+                        //SHOW-OVERLAY APPEND
                         overlay_show_container.append(overlay_show_content,overlay_show_content_name)
                         overlay_show.append(closeDot,/*leftArrowDot,rightArrowDot,*/overlay_show_container)
-        
                         overlay_show_shadow.append(overlay_show)
                         document.body.append(overlay_show_shadow)
                     })
+
                     const file_overlay_name = document.createElement('p')
                     file_overlay_name.classList.add('file-overlay-name')
                     file_overlay_name.innerHTML = `${importField.files.item(i).name}`
-                    file_overlay.style.display = 'none'
-                    file_overlay.classList.add('file-overlay')
             
                     form_right_grid_file.addEventListener('mouseenter', () => {
                         file_overlay.style.display = "flex"
@@ -1559,33 +1561,30 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         })
                         reader.readAsDataURL(importField.files[i])
                         formRightGrid.appendChild(form_right_grid_file)
-                    } else {
-                        alert('Your browser does not spport File API')
-                    }
+                    } else { alert('Your browser does not spport File API') }
                 };
 
                 for (let file of importField.files) {
                     dt.items.add(file);
                 }
-
                 importField.files = dt.files;
             });
-    
+            
+            //UPDATE/DELETE-OVERLAY-APPEND
             formRightImport.append(importField)
             formRight.append(formRightGrid,formRightImport)
-
-            /* APENDING OF ELEMENTS */
-            overlay.append(formLeft,formRight)
+            overlay.append(formLeft,formRight,closeDot,saveDot,deleteDot)
             overlayShadow.append(overlay)
             document.body.append(overlayShadow)
         });
 
-        /* 2.folder_content */
+        //FOLDER-FOLDERCONTENT
         const folder_content = document.createElement('div')
         folder_content.classList.add('folder-content')
         const folder_content_container = document.createElement('div')
         folder_content_container.classList.add('folder-content-container')
 
+        //send id and get files from files database
         const data_id = folder.id;
         const datasend = {data_id};
         const id = {
@@ -1596,10 +1595,10 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             body: JSON.stringify(datasend)
         };
         fetch('/fetchsend',id);
-
         const response = await fetch('/fetchrecieve')
         const datarecieve = await response.json();
 
+        //setting a folder cover image
         if (item.data_main_image !== "") {
             datarecieve.find(function(post, index) {
                 if(post.originalname == item.data_main_image) {
@@ -1633,6 +1632,7 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             }
         }
         
+        //setting preview images for folder content
         let grid_index = 0
         datarecieve.forEach(file => {
             if (grid_index < 15) {
@@ -1658,32 +1658,28 @@ async function getAllData(keyword_value, direction_value, filter_value) {
 
         folder_content.appendChild(folder_content_container)
 
-        /* 3.folder_info */
+        //FOLDER-FOLDERINFO
         const folder_info = document.createElement('div')
         folder_info.classList.add('folder-info')
 
         const folder_info_alias = document.createElement('div')
         folder_info_alias.classList.add('folder-info-alias')
-
         const info_content_alias = document.createElement('div')
         info_content_alias.classList.add('info-content')
-        const ica_label = document.createElement('label')
-        ica_label.textContent = 'Alias'
-        const ica_p = document.createElement('p')
-        ica_p.textContent = `${item.data_alias}`
-        info_content_alias.append(ica_label,ica_p)
-
+        const info_content_alias_label = document.createElement('label')
+        info_content_alias_label.textContent = 'Alias'
+        const info_content_alias_p = document.createElement('p')
+        info_content_alias_p.textContent = `${item.data_alias}`
+        info_content_alias.append(info_content_alias_label,info_content_alias_p)
         folder_info_alias.appendChild(info_content_alias)
-
 
         const folder_info_description = document.createElement('div')
         folder_info_description.classList.add('folder-info-description')
-
         const info_content_description = document.createElement('div')
         info_content_description.classList.add('info-content')
-        const icd_label = document.createElement('label')
-        icd_label.textContent = 'Description'
-        const icd_p = document.createElement('p')
+        const info_content_description_label = document.createElement('label')
+        info_content_description_label.textContent = 'Description'
+        const info_content_description_p = document.createElement('p')
         
         function urlify(text) {
             const urlRegex = new RegExp(/(https?:\/\/[^\s]+)/g);
@@ -1693,16 +1689,13 @@ async function getAllData(keyword_value, direction_value, filter_value) {
         }
         const urlifyed_text = urlify(item.data_description)
 
-        icd_p.innerHTML = `${urlifyed_text}`
-        info_content_description.append(icd_label,icd_p)
-
+        info_content_description_p.innerHTML = `${urlifyed_text}`
+        info_content_description.append(info_content_description_label,info_content_description_p)
         folder_info_description.appendChild(info_content_description)
-
         folder_info.append(folder_info_alias,folder_info_description)
 
-        /*folder append*/
+        //FOLDER APPEND
         folder.append(folder_main,folder_content,folder_info)
-
         grid.append(folder)
     }
 }
