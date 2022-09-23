@@ -7,12 +7,10 @@
 
 body {
     height: 100vh;
-    min-width: 1920px;
-    min-height: 1030px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 40px;
     font-family: 'Muli', sans-serif;
     background: #121212;
     box-sizing: border-box;
@@ -36,13 +34,14 @@ body {
 
 /* TOP */
 #top {
-    height: 50px;
+    height: 100px;
     width: 100%;
+    min-width: 1050px;
     display: flex;
     flex-direction: row;
     gap: 25px;
-    padding: 25px;
-    box-sizing: border-box;
+    padding: 25px 25px;
+    box-sizing: border-box
 }
 
 /* 1.search-container */
@@ -219,10 +218,13 @@ body {
 /* BOTTOM */
 #bottom {
     width: 100%;
+    min-width: 1050px;
+    flex: 1;
+    min-height: 700px;
     display: flex;
     flex-direction: column;
     gap: 50px;
-    padding: 25px;
+    padding: 15px 25px 25px 25px;
     box-sizing: border-box;
     overflow: hidden;
 }
@@ -233,20 +235,17 @@ body {
     width: 100%; 
     background: #1E1E1E;
     border-radius: 15px;
-    overflow: hidden;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 /* main-container grid */
 #grid {
-    height: 100%;
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
     padding: 10px;
-    overflow-y: scroll;
-    overflow-x: hidden;
     box-sizing: border-box;
 }
 
@@ -448,8 +447,8 @@ a:active {
     align-items: center;
     height: 100vh;
     width: 100%;
-    min-width: 1920px;
-    min-height: 1030px;
+    min-height: 800px;
+    min-width: 1050px;
     background: rgba(0, 0, 0, 0.800);
 }
 
@@ -463,7 +462,7 @@ a:active {
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
-    gap: 50px;
+    gap: 25px;
 }
 
 /* 1.form-left */
@@ -472,7 +471,7 @@ a:active {
     width: 30%;
     display: flex;
     flex-direction: column;
-    gap: 50px;
+    gap: 25px;
 }
 
 #form-left-name {
@@ -519,8 +518,9 @@ a:active {
 /* 2.form-right */
 #form-right {
     height: 100%;
-    width: 70%;
+    width: 67%;
     border-radius: 15px;
+    box-sizing: border-box;
     overflow: hidden;
     background: #1E1E1E;
 }
@@ -532,9 +532,8 @@ a:active {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
     gap: 5px;
-
     overflow-y: scroll;
-    padding: 5px;
+    padding: 15px;
     box-sizing: border-box;
 }
 
@@ -600,6 +599,35 @@ a:active {
     align-items: center;
 }
 
+/* 3.form-dots */
+#form-dots {
+    height: 100%;
+    width: 3%;
+    display: flex;
+    gap: 25px;
+    box-sizing: border-box;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dot {
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 25px;
+    background: #1E1E1E;
+    cursor: pointer;
+    flex: 1;
+    width: 100%;
+    min-width: 40px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dot:hover {
+    background: #222222;
+}
+
 /* file overlay show */
 #overlay-show-shadow {
     position: absolute;
@@ -610,17 +638,19 @@ a:active {
     align-items: center;
     height: 100vh;
     width: 100%;
-    min-width: 1920px;
-    min-height: 1030px;
+    min-width: 1050px;
+    min-height: 800px;
     background: rgba(0, 0, 0, 0.800);
 }
 
 #overlay-show {
     height: 90%;
     width: 90%;
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
     border-radius: 15px;
     background: #121212;
-    position: relative;
     padding: 25px;
     box-sizing: border-box;
 }
@@ -628,7 +658,7 @@ a:active {
 #overlay-show-container {
     background: #1E1E1E;
     height: 100%;
-    width: 100%;
+    width: 97%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -673,46 +703,17 @@ a:active {
     content-visibility: auto;
 }
 
-/* 3.dots */
-.dot {
-    color: rgba(255, 255, 255, 0.87);
-    font-size: 25px;
-    background: #121212;
-    cursor: pointer;
-    height: 100px;
-    width: 50px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute; 
-}
-
-.dot:hover {
-    background:#1E1E1E;
-}
-
-.close-dot {
-    top: 0px;
-    right: -75px;
-}
-
-.save-dot {
-    top: 125px;
-    right: -75px;
-}
-
-.delete-dot {
-    bottom: 0px;
-    right: -75px;
-}
-
-.left-arrow-dot {
-    top: 500px;
-    left: -75px;
-}
-
-.right-arrow-dot {
-    top: 500px;
-    right: -75px;
+@media screen and (max-width: 1650px) {
+    .file-overlay {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+    .file-overlay i {
+        font-size: 40px;
+    }
+    .file-overlay-name {
+        font-size: 9px;
+    }
 }

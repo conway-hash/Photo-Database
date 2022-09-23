@@ -428,8 +428,12 @@ addFolderAction.addEventListener('click', () => {
                 document.addEventListener('keydown', ArrowFunctionRemove)
 
                 //SHOW-OVERLAY APPEND
+                const formDots = document.createElement('div');
+                formDots.id = 'form-dots';
+                formDots.append(closeDot,leftArrowDot,rightArrowDot)
+
                 overlay_show_container.append(overlay_show_content,overlay_show_content_name)
-                overlay_show.append(closeDot,leftArrowDot,rightArrowDot,overlay_show_container)
+                overlay_show.append(overlay_show_container,formDots)
                 overlay_show_shadow.append(overlay_show)
                 document.body.append(overlay_show_shadow)
             })
@@ -477,9 +481,13 @@ addFolderAction.addEventListener('click', () => {
     });
     
     //FORM/UPLOAD-OVERLAY-APPEND
+    const formDots = document.createElement('div');
+    formDots.id = 'form-dots';
+    formDots.append(closeDot,saveDot)
+
     formRightImport.append(importField)
     formRight.append(formRightGrid,formRightImport)
-    overlay.append(formLeft,formRight,closeDot,saveDot)
+    overlay.append(formLeft,formRight,formDots)
     overlayShadow.append(overlay)
     document.body.append(overlayShadow)
 })    
@@ -1034,8 +1042,12 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     document.addEventListener('keydown', ArrowFunctionRemove)
 
                     //SHOW-OVERLAY APPEND
+                    const formDots = document.createElement('div');
+                    formDots.id = 'form-dots';
+                    formDots.append(closeDot,leftArrowDot,rightArrowDot)
+    
                     overlay_show_container.append(overlay_show_content,overlay_show_content_name)
-                    overlay_show.append(closeDot,leftArrowDot,rightArrowDot,overlay_show_container)
+                    overlay_show.append(overlay_show_container,formDots)
                     overlay_show_shadow.append(overlay_show)
                     document.body.append(overlay_show_shadow)
                 })
@@ -1411,8 +1423,12 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         document.addEventListener('keydown', ArrowFunctionRemove)        
 
                         //SHOW-OVERLAY APPEND
+                        const formDots = document.createElement('div');
+                        formDots.id = 'form-dots';
+                        formDots.append(closeDot,leftArrowDot,rightArrowDot)
+        
                         overlay_show_container.append(overlay_show_content,overlay_show_content_name)
-                        overlay_show.append(closeDot,leftArrowDot,rightArrowDot,overlay_show_container)
+                        overlay_show.append(overlay_show_container,formDots)
                         overlay_show_shadow.append(overlay_show)
                         document.body.append(overlay_show_shadow)
                     })
@@ -1460,9 +1476,13 @@ async function getAllData(keyword_value, direction_value, filter_value) {
             });
             
             //UPDATE/DELETE-OVERLAY-APPEND
+            const formDots = document.createElement('div');
+            formDots.id = 'form-dots';
+            formDots.append(closeDot,deleteDot,saveDot)
+
             formRightImport.append(importField)
             formRight.append(formRightGrid,formRightImport)
-            overlay.append(formLeft,formRight,closeDot,saveDot,deleteDot)
+            overlay.append(formLeft,formRight,formDots)
             overlayShadow.append(overlay)
             document.body.append(overlayShadow)
         });
