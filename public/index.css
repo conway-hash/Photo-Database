@@ -716,4 +716,10 @@ a:active {
     .file-overlay-name {
         font-size: 9px;
     }
+    .folder-main-content h4 {
+        font-size: 13px;
+    }
+    .folder-main-content p {
+        font-size: 10px;
+    }
 }

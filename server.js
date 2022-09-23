@@ -154,10 +154,11 @@ app.post('/updatetext', (request, response) => {
 
 app.post("/uploadfiles", upload.array("files"),(req, res) => {
     const data = req.files
-    data.forEach(arrayItem => {
+    data.forEach((arrayItem,index) => {
         const namefix = Buffer.from(arrayItem.originalname, 'latin1').toString('utf8')
         arrayItem.originalname = namefix
         arrayItem.id = data_id;
+        arrayItem._id = data_id + '--' + Date.now() + '--' + index
         files_database.insert(arrayItem)
     });
     data_id =''
