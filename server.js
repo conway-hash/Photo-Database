@@ -28,6 +28,7 @@ const fileStorageEngine = multer.diskStorage({
 const upload = multer({ storage: fileStorageEngine })
 
 /*
+//reset databases
 text_database.remove({}, { multi: true },(err, numRemoved) => {
     console.log(numRemoved)
 });
@@ -42,7 +43,15 @@ files_database.persistence.compactDatafile()
 let data_array = ''
 app.post('/sort', (request, response) => {
     data_array = request.body
-    response.end();
+    text_database.find({}, function(err, data){
+        if (err) {
+            response.end();
+            return; 
+        }
+        response.send({ 
+            length: data.length
+        });
+    })
 });
 
 app.get('/fetchtext', (request, response) => {

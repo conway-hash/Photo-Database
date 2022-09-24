@@ -64,6 +64,10 @@ direction.addEventListener('click', () => {
         getAllData(search_bar.value,direction_var,filter_value);
     }
 })
+
+//NOTIFICATION AREA
+const notification_area = document.querySelector('#notification-area')
+
 //FIRST INITIATION
 getAllData(search_bar.value,direction_var,filter_value);
 
@@ -124,7 +128,16 @@ addFolderAction.addEventListener('click', () => {
             const name_check_response_fetch = await fetch("/namecheck")
             const name_check_response_json = await name_check_response_fetch.json()
             if (name_check_response_json.name_check_data) {
-                alert('File name already taken!')
+                const notification = document.createElement('div')
+                notification.classList.add('notification','appear')
+                notification.innerHTML = `
+                    <h5>File name already taken!</h5> 
+                    <p>Name: ${formLeftName.value}</p>
+                `
+                notification_area.prepend(notification)
+                setTimeout(function() {
+                    notification.remove()
+                },5000)
                 return
             }
 
@@ -158,7 +171,17 @@ addFolderAction.addEventListener('click', () => {
             //reset
             getAllData(search_bar.value,direction_var,filter_value);
             overlayShadow.remove();
-        } else {alert('Specify folder name!')}
+        } else {
+            const notification = document.createElement('div')
+            notification.classList.add('notification','appear')
+            notification.innerHTML = `
+                <h5>Specify folder name!</h5> 
+            `
+            notification_area.prepend(notification)
+            setTimeout(function() {
+                notification.remove()
+            },5000)
+        }
     })
 
     //UPLOAD-OVERLAY-FORMLEFT
@@ -198,9 +221,34 @@ addFolderAction.addEventListener('click', () => {
     //add files, add more files, show, flag and delete files
     let flag_image = ''
     const dt = new DataTransfer();
+    const dtsc = new DataTransfer();
     importField.addEventListener('change', () => {
+        let big_files = false
+        let delete_files = []
         for(let i = 0; i < importField.files.length; i++){
-            //for each file imported, each time files are imported
+            if (importField.files[i].size > 20000000) { //20MB
+                dtsc.clearData()
+                big_files = true
+
+                for (file of importField.files) {
+                    dtsc.items.add(file); 
+                }
+
+                const notification = document.createElement('div')
+                notification.classList.add('notification','appear')
+                notification.innerHTML = `
+                    <h5>The file you tried to upload is bigger than 20Mb!</h5> 
+                    <p>File: ${importField.files[i].name}</p>
+                `
+                notification_area.prepend(notification)
+                setTimeout(function() {
+                    notification.remove()
+                },5000)
+
+                delete_files.push(importField.files.item(i).name)
+                continue
+            } 
+            
             const form_right_grid_file = document.createElement('div')
             form_right_grid_file.classList.add('form-right-grid-file','new-frgf')
             form_right_grid_file.id = i
@@ -474,12 +522,27 @@ addFolderAction.addEventListener('click', () => {
             } else { alert('Your browser does not spport File API') }
         };
 
+        if (big_files) {
+            for (let j = 0; j < dtsc.items.length; j++){
+                for (let k = 0; k < delete_files.length; k++){
+                    if(dtsc.items[j].getAsFile().name === delete_files[k]){
+                        dtsc.items.remove(j);
+                        continue
+                    }
+                }    
+            }
+            importField.files = dtsc.files
+            dtsc.clearData()
+            big_files = false
+            delete_files = []
+        }
+
         for (let file of importField.files) {
             dt.items.add(file);
         }
         importField.files = dt.files;
     });
-    
+
     //FORM/UPLOAD-OVERLAY-APPEND
     const formDots = document.createElement('div');
     formDots.id = 'form-dots';
@@ -503,7 +566,8 @@ async function getAllData(keyword_value, direction_value, filter_value) {
         },
         body: JSON.stringify(value_in)
     };
-    fetch('/sort',value_req)
+    const length_response = await fetch('/sort',value_req)
+    const length_json = await length_response.json()
 
     // recieve filtered data
     const fetch_text_response = await fetch('/fetchtext')
@@ -512,6 +576,9 @@ async function getAllData(keyword_value, direction_value, filter_value) {
     // clear grid each time function is called
     const grid = document.querySelector('#grid')
     grid.innerHTML = ''
+
+    const main_container_info = document.querySelector('#main-container-info')
+    main_container_info.innerHTML = `Showing ${data.length} from ${length_json.length} folders`
 
     // for each object from data create a folder
     for (item of data) {
@@ -619,7 +686,16 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     const name_check_response_fetch = await fetch("/namecheck")
                     const name_check_response_json = await name_check_response_fetch.json()
                     if (name_check_response_json.name_check_data) {
-                        alert('File name already taken!')
+                        const notification = document.createElement('div')
+                        notification.classList.add('notification','appear')
+                        notification.innerHTML = `
+                            <h5>File name already taken!</h5> 
+                            <p>Name: ${formLeftName.value}</p>
+                        `
+                        notification_area.prepend(notification)
+                        setTimeout(function() {
+                            notification.remove()
+                        },5000)
                         return
                     }
 
@@ -667,7 +743,17 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                     //reset
                     getAllData(search_bar.value,direction_var,filter_value);   
                     overlayShadow.remove();              
-                } else { alert('Specify folder name!') }
+                } else {
+                    const notification = document.createElement('div')
+                    notification.classList.add('notification','appear')
+                    notification.innerHTML = `
+                        <h5>Specify folder name!</h5> 
+                    `
+                    notification_area.prepend(notification)
+                    setTimeout(function() {
+                        notification.remove()
+                    },5000)
+                }
             })
         
             //UPDATE/DELETE-OVERLAY-FORMLEFT
@@ -1086,8 +1172,34 @@ async function getAllData(keyword_value, direction_value, filter_value) {
 
             //add files, add more files, show, flag and delete files
             const dt = new DataTransfer();
+            const dtsc = new DataTransfer();
             importField.addEventListener('change', () => {
+                let big_files = false
+                let delete_files = []
                 for(let i = 0; i < importField.files.length; i++){
+                    if (importField.files[i].size > 20000000) { //20MB
+                        dtsc.clearData()
+                        big_files = true
+        
+                        for (file of importField.files) {
+                            dtsc.items.add(file); 
+                        }
+        
+                        const notification = document.createElement('div')
+                        notification.classList.add('notification','appear')
+                        notification.innerHTML = `
+                            <h5>The file you tried to upload is bigger than 20Mb!</h5> 
+                            <p>File: ${importField.files[i].name}</p>
+                        `
+                        notification_area.prepend(notification)
+                        setTimeout(function() {
+                            notification.remove()
+                        },5000)
+        
+                        delete_files.push(importField.files.item(i).name)
+                        continue
+                    }
+
                     //for each file imported, each time files are imported
                     const form_right_grid_file = document.createElement('div')
                     form_right_grid_file.classList.add('form-right-grid-file','new-frgf')
@@ -1468,6 +1580,21 @@ async function getAllData(keyword_value, direction_value, filter_value) {
                         formRightGrid.appendChild(form_right_grid_file)
                     } else { alert('Your browser does not spport File API') }
                 };
+
+                if (big_files) {
+                    for (let j = 0; j < dtsc.items.length; j++){
+                        for (let k = 0; k < delete_files.length; k++){
+                            if(dtsc.items[j].getAsFile().name === delete_files[k]){
+                                dtsc.items.remove(j);
+                                continue
+                            }
+                        }    
+                    }
+                    importField.files = dtsc.files
+                    dtsc.clearData()
+                    big_files = false
+                    delete_files = []
+                }
 
                 for (let file of importField.files) {
                     dt.items.add(file);
